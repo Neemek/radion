@@ -8,6 +8,6 @@ using namespace std;
 
 class Lexer {
 public:
-	vector<Token> lex(char* src);
+	static vector<Token> lex(std::string src);
 };
 
