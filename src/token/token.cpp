@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Token::Token(TokenType type, char lexeme[], int pos)
+Token::Token(TokenType type, string lexeme, int pos)
 {
 	_type = type;
 	_lexeme = lexeme;

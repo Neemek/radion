@@ -7,19 +7,19 @@ using namespace std;
 class Token
 {
 public:
-	Token(TokenType type, char lexeme[], int pos);
+	Token(TokenType type, string lexeme, int pos);
 
 	// Get the type of this token
 	TokenType type();
 
 	// Get the lexeme
-	std::string lexeme();
+	string lexeme();
 
 	// Get the position of the lexeme in the source
 	int pos();
 
 private:
 	TokenType _type;
-	char* _lexeme;
+	string _lexeme;
 	int _pos;
 };
