@@ -2,6 +2,10 @@
 
 enum TokenType
 {
+    // Values
+    ASSIGN,
+    VARIABLE,
+
     // Primitive types
     STRING,
     NUMBER,
@@ -27,4 +31,15 @@ enum TokenType
     GREATER_THAN,
     GREATER_EQUAL,
     NOT,
+
+    // Parenthasis
+    OPEN_PAREN,     CLOSE_PAREN,
+    OPEN_BRACKET,   CLOSE_BRACKET,
+    OPEN_CURLY,     CLOSE_CURLY,
+
+    // Keywords
+    IF,
+    ELSE,
+    FOR,
+    WHILE,
 };
