@@ -1,75 +1,128 @@
-#include "radion/lexer.hpp"
-
+#include <iostream>
 #include <vector>
 
-vector<Token> Lexer::lex(char* src)
+#include "radion/lexer.hpp"
+
+vector<Token> Lexer::lex(std::string src)
 {
-    string s(src);
 
     vector<Token> tokens = vector<Token>();
-    int pos = 0;
+    int pos = 0, start;
 
-    char c, n;
-    while (pos < s.length()) {
-        c = s.at(pos);
+    string c, n;
+    while (pos < src.length()) {
+        start = pos;
+        c = src.at(pos);
 
-        switch (c)
+        switch (c.at(0))
         {
         // Arithmetics
         case '+':
-            tokens.push_back(Token(TokenType::PLUS, &c, pos));
+            tokens.push_back(Token(TokenType::PLUS, c, start));
             break;
         case '-':
-            tokens.push_back(Token(TokenType::MINUS, &c, pos));
+            tokens.push_back(Token(TokenType::MINUS, c, start));
             break;
         case '*':
-            tokens.push_back(Token(TokenType::MULTIPLY, &c, pos));
+            tokens.push_back(Token(TokenType::MULTIPLY, c, start));
             break;
         case '/':
-            tokens.push_back(Token(TokenType::DIVIDE, &c, pos));
+            tokens.push_back(Token(TokenType::DIVIDE, c, start));
             break;
         
         // Truthyness
         case '=':
-            tokens.push_back(Token(TokenType::EQUAL, &c, pos));
+            if (pos+1 < src.length() && src.at(++pos) == '=')
+                tokens.push_back(Token(TokenType::EQUAL, "==", start));
+            else
+                tokens.push_back(Token(TokenType::ASSIGN, c, start));
             break;
         case '!':
-            n = s.at(pos+1);
-            if (n == '=')
-                tokens.push_back(Token(TokenType::NOT_EQUAL, &c, pos));
+            if (pos+1 < src.length() && src.at(++pos) == '=')
+                tokens.push_back(Token(TokenType::NOT_EQUAL, c, start));
             else 
-                tokens.push_back(Token(TokenType::NOT, "!=", pos));
+                tokens.push_back(Token(TokenType::NOT, "!=", start));
             break;
         case '>':
-            n = s.at(pos+1);
-            if (n == '=')
-                tokens.push_back(Token(TokenType::GREATER_EQUAL, ">=", pos));
+            if (pos+1 < src.length() && src.at(++pos) == '=')
+                tokens.push_back(Token(TokenType::GREATER_EQUAL, ">=", start));
             else 
-                tokens.push_back(Token(TokenType::GREATER_THAN, &c, pos));
+                tokens.push_back(Token(TokenType::GREATER_THAN, c, start));
             break;
         case '<':
-            n = s.at(pos+1);
-            if (n == '='){
-                tokens.push_back(Token(TokenType::LESS_EQUAL, "<=", pos));
+            if (pos+1 < src.length() && src.at(++pos) == '='){
+                tokens.push_back(Token(TokenType::LESS_EQUAL, "<=", start));
             } else 
-                tokens.push_back(Token(TokenType::LESS_THAN, &c, pos));
+                tokens.push_back(Token(TokenType::LESS_THAN, c, start));
             break;
         
         case '%':
-            tokens.push_back(Token(TokenType::MODULO, &c, pos));
+            tokens.push_back(Token(TokenType::MODULO, c, start));
             break;
         
-
-
-        default:
-            if (isdigit(c)) {
-                int num = c - '0';
-                while (isdigit(s[pos+1])) {
-                    num += s[++pos] - '0';
+        case '"':
+            {
+                string str;
+                str += '"';
+                while (pos+1 < src.length() && src.at(pos+1) != '"') {
+                    str += src.at(++pos);
                 }
+                pos++;
+                str += '"';
+                tokens.push_back(Token(TokenType::STRING, str, start));
+            }
+            break;
+
+        // Parenthasis
+        case '(':
+            tokens.push_back(Token(TokenType::OPEN_PAREN, c, start));
+            break;
+        case ')':
+            tokens.push_back(Token(TokenType::CLOSE_PAREN, c, start));
+            break;
+        case '[':
+            tokens.push_back(Token(TokenType::OPEN_BRACKET, c, start));
+            break;
+        case ']':
+            tokens.push_back(Token(TokenType::CLOSE_BRACKET, c, start));
+            break;
+        case '{':
+            tokens.push_back(Token(TokenType::OPEN_CURLY, c, start));
+            break;
+        case '}':
+            tokens.push_back(Token(TokenType::CLOSE_CURLY, c, start));
+            break;
+
+        // Longer tokens
+        default:
+            if (isdigit(c.at(0))) {
+                string num;
+                num += c;
+                while (pos+1 < src.length() && isdigit(src.at(pos+1))) {
+                    num += src.at(++pos);
+                }
+                tokens.push_back(Token(TokenType::NUMBER, num, start));
+            } else if (isalpha(c.at(0))) {
+                string v;
+                v += c;
+                while (pos+1 < src.length() && isalpha(src.at(pos+1))) {
+                    v += src.at(++pos);
+                }
+
+                const char* var = v.c_str();
+                if (strcmp(var, "if")) tokens.push_back(Token(TokenType::IF, var, start));
+                else if (strcmp(var, "else")) tokens.push_back(Token(TokenType::ELSE, var, start));
+                else if (strcmp(var, "true")) tokens.push_back(Token(TokenType::TRUE, var, start));
+                else if (strcmp(var, "false")) tokens.push_back(Token(TokenType::FALSE, var, start));
+                else if (strcmp(var, "nil")) tokens.push_back(Token(TokenType::NIL, var, start));
+                else if (strcmp(var, "for")) tokens.push_back(Token(TokenType::FOR, var, start));
+                else if (strcmp(var, "while")) tokens.push_back(Token(TokenType::WHILE, var, start));
+                else tokens.push_back(Token(TokenType::VARIABLE, var, start));
             }
             break;
         }
+
+        pos++;
     }
 
     return tokens;
