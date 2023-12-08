@@ -93,6 +93,10 @@ vector<Token> Lexer::lex(std::string src)
             tokens.push_back(Token(TokenType::CLOSE_CURLY, c, start));
             break;
 
+        case ',':
+            tokens.push_back(Token(TokenType::COMMA, c, start));
+            break;
+
         // Longer tokens
         default:
             if (isdigit(c.at(0))) {
@@ -117,13 +121,14 @@ vector<Token> Lexer::lex(std::string src)
                 else if (strcmp(var, "nil")) tokens.push_back(Token(TokenType::NIL, var, start));
                 else if (strcmp(var, "for")) tokens.push_back(Token(TokenType::FOR, var, start));
                 else if (strcmp(var, "while")) tokens.push_back(Token(TokenType::WHILE, var, start));
-                else tokens.push_back(Token(TokenType::VARIABLE, var, start));
+                else tokens.push_back(Token(TokenType::NAME, var, start));
             }
             break;
         }
 
         pos++;
     }
+    tokens.push_back(Token(TokenType::END, "", -1));
 
     return tokens;
 }

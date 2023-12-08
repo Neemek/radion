@@ -4,7 +4,7 @@ enum TokenType
 {
     // Values
     ASSIGN,
-    VARIABLE,
+    NAME,
 
     // Primitive types
     STRING,
@@ -42,4 +42,8 @@ enum TokenType
     ELSE,
     FOR,
     WHILE,
+
+    // Other
+    COMMA,
+    END,
 };

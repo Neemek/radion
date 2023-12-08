@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include "radion/lexer.hpp"
+#include "radion/parser/parser.hpp"
 
 int main (int argc, char *argv[]) {
 	if (argc <= 1) {
@@ -16,9 +17,11 @@ int main (int argc, char *argv[]) {
 
 		vector<Token> tokens = Lexer::lex(src);
 
-		for (int i=0; i < tokens.size(); i++) {
-			std::cout << tokens.at(i).lexeme() << std::endl;
-		}
+		Parser p(tokens, src);
+
+		Node program = p.parse();
+
+		
 	}
 	
 	return 0;
