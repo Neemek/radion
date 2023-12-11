@@ -8,6 +8,7 @@ enum ArithmeticOperation {
 
 
 struct ArithmeticNode : Node {
+    const int type = NodeType::Arithemtic;
     ArithmeticOperation op;
 
     Node left;
