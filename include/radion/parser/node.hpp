@@ -13,7 +13,7 @@ enum NodeType {
     If,
     Call,
     Define,
-    Arithemtic,
+    Arithmetic,
 };
 
 struct Node {
