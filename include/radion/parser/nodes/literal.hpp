@@ -1,6 +1,8 @@
 #include "radion/parser/node.hpp"
 #include <string>
 
+#define NIL_VALUE NULL
+
 struct IntLiteralNode : Node {
     const int type = NodeType::IntLiteral;
     int number;
