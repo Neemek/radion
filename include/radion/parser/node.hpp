@@ -17,5 +17,5 @@ enum NodeType {
 };
 
 struct Node {
-    const int type = -1;
+    int type = -1;
 };
