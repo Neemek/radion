@@ -1,3 +1,4 @@
+#pragma once
 #include "radion/parser/node.hpp"
 #include <string>
 
@@ -19,5 +20,5 @@ struct BooleanLiteralNode : Node {
 };
 
 struct NilLiteralNode : Node {
-    int type = NodeType::NilLiteral;
+    const int type = NodeType::NilLiteral;
 };

@@ -1,3 +1,4 @@
+#pragma once
 #include "radion/parser/node.hpp"
 
 struct IfNode : Node {

@@ -1,3 +1,4 @@
+#pragma once
 #include "radion/parser/node.hpp"
 #include <string>
 
@@ -12,4 +13,5 @@ struct CallNode : Node {
 struct DefineNode : CallNode {
     int type = NodeType::Define;
     Node logic;
+    std::string params[MAX_PARAMS];
 };
