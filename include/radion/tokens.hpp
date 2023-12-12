@@ -18,10 +18,10 @@ enum TokenType
     // Arithmetics
     PLUS,
     MINUS,
-    MULTIPLY,
-    DIVIDE,
+    STAR,
+    SLASH,
     POWER,
-    MODULO,
+    PERCENTAGE,
 
     // Truthyness
     EQUAL,
