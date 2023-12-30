@@ -5,13 +5,15 @@
 #define MAX_PARAMS 255
 
 struct CallNode : Node {
-    int type = NodeType::Call;
+    CallNode() : Node(NodeType::Call) {}
+    CallNode(NodeType t) : Node(t) {}
+    
     std::string name;
-    Node params[MAX_PARAMS];
+    Node* params[MAX_PARAMS];
 };
 
 struct DefineNode : CallNode {
-    int type = NodeType::Define;
-    Node logic;
+    DefineNode() : CallNode(NodeType::Define) {}
+    Node* logic;
     std::string params[MAX_PARAMS];
 };

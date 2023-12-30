@@ -1,12 +1,14 @@
 #pragma once
 #include "radion/parser/node.hpp"
 #include "radion/token.hpp"
+#include "radion/parser/nodes/block.hpp"
 #include <string>
 
 class Parser {
 public:
     Parser(vector<Token> tokens, string src);
-    Node parse();
+    BlockNode parse();
+    bool hadError = false;
 
 private:
     int pos = -1;
@@ -20,11 +22,11 @@ private:
     void error(Token token, const char* message);
 
     bool accept(TokenType type);
-    void expect(TokenType type);
+    void expect(TokenType type, const char* error);
 
-    Node factor();
-    Node term();
-    Node expression();
-    Node statement();
-    Node block();
+    Node* factor();
+    Node* term();
+    Node* expression();
+    Node* statement();
+    Node* block();
 };

@@ -3,6 +3,6 @@
 #include <vector>
 
 struct BlockNode : Node {
-    int type = NodeType::Block;
-    std::vector<Node> statements;
+    BlockNode() : Node(NodeType::Block) {}
+    std::vector<Node*> statements;
 };

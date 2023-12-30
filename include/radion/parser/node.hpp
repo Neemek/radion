@@ -19,5 +19,8 @@ enum NodeType {
 };
 
 struct Node {
-    int type = -1;
+    Node(NodeType t) {
+        type = t;
+    }
+    NodeType type;
 };

@@ -9,9 +9,10 @@ enum ArithmeticOperation {
 
 
 struct ArithmeticNode : Node {
-    int type = NodeType::Arithmetic;
+    ArithmeticNode() : Node(NodeType::Arithmetic) {}
+
     ArithmeticOperation op;
 
-    Node left;
-    Node right;
+    Node* left;
+    Node* right;
 };

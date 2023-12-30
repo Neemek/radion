@@ -3,6 +3,6 @@
 #include <string>
 
 struct ReferenceNode : Node {
-    int type = NodeType::Reference;
+    ReferenceNode() : Node(NodeType::Reference) {}
     std::string name;
 };

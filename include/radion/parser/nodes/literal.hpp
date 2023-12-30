@@ -5,20 +5,20 @@
 #define NIL_VALUE NULL
 
 struct IntLiteralNode : Node {
-    int type = NodeType::IntLiteral;
+    IntLiteralNode() : Node(NodeType::IntLiteral) {}
     int number;
 };
 
 struct StringLiteralNode : Node {
-    int type = NodeType::StringLiteral;
+    StringLiteralNode() : Node(NodeType::StringLiteral) {}
     std::string string;
 };
 
 struct BooleanLiteralNode : Node {
-    int type = NodeType::BooleanLiteral;
+    BooleanLiteralNode() : Node(NodeType::BooleanLiteral) {}
     bool boolean;
 };
 
 struct NilLiteralNode : Node {
-    const int type = NodeType::NilLiteral;
+    NilLiteralNode() : Node(NodeType::NilLiteral) {}
 };
