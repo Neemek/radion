@@ -24,10 +24,10 @@ vector<Token> Lexer::lex(std::string src)
             tokens.push_back(Token(TokenType::MINUS, c, start));
             break;
         case '*':
-            tokens.push_back(Token(TokenType::MULTIPLY, c, start));
+            tokens.push_back(Token(TokenType::STAR, c, start));
             break;
         case '/':
-            tokens.push_back(Token(TokenType::DIVIDE, c, start));
+            tokens.push_back(Token(TokenType::SLASH, c, start));
             break;
         
         // Truthyness
@@ -57,7 +57,7 @@ vector<Token> Lexer::lex(std::string src)
             break;
         
         case '%':
-            tokens.push_back(Token(TokenType::MODULO, c, start));
+            tokens.push_back(Token(TokenType::PERCENTAGE, c, start));
             break;
         
         case '"':
@@ -114,13 +114,13 @@ vector<Token> Lexer::lex(std::string src)
                 }
 
                 const char* var = v.c_str();
-                if (strcmp(var, "if")) tokens.push_back(Token(TokenType::IF, var, start));
-                else if (strcmp(var, "else")) tokens.push_back(Token(TokenType::ELSE, var, start));
-                else if (strcmp(var, "true")) tokens.push_back(Token(TokenType::TRUE, var, start));
-                else if (strcmp(var, "false")) tokens.push_back(Token(TokenType::FALSE, var, start));
-                else if (strcmp(var, "nil")) tokens.push_back(Token(TokenType::NIL, var, start));
-                else if (strcmp(var, "for")) tokens.push_back(Token(TokenType::FOR, var, start));
-                else if (strcmp(var, "while")) tokens.push_back(Token(TokenType::WHILE, var, start));
+                if (!strcmp(var, "if")) tokens.push_back(Token(TokenType::IF, var, start));
+                else if (!strcmp(var, "else")) tokens.push_back(Token(TokenType::ELSE, var, start));
+                else if (!strcmp(var, "true")) tokens.push_back(Token(TokenType::TRUE, var, start));
+                else if (!strcmp(var, "false")) tokens.push_back(Token(TokenType::FALSE, var, start));
+                else if (!strcmp(var, "nil")) tokens.push_back(Token(TokenType::NIL, var, start));
+                else if (!strcmp(var, "for")) tokens.push_back(Token(TokenType::FOR, var, start));
+                else if (!strcmp(var, "while")) tokens.push_back(Token(TokenType::WHILE, var, start));
                 else tokens.push_back(Token(TokenType::NAME, var, start));
             }
             break;
