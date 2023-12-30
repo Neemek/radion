@@ -22,5 +22,5 @@ NativeCallable::NativeCallable(std::function<std::any(std::any arguments[])> fun
 }
 
 std::any NativeCallable::call(Interpreter* interpreter, std::any arguments[]) {
-    return logic(arguments);
+    return this->logic(arguments);
 }

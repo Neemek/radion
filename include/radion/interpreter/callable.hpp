@@ -1,6 +1,7 @@
 #include <any>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "radion/interpreter/interpreter.hpp"
 #include "radion/parser/nodes/functions.hpp"
