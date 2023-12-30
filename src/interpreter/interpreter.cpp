@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cmath>
+#include <functional>
 #include "radion/interpreter/callable.hpp"
 #include "radion/interpreter/interpreter.hpp"
 
