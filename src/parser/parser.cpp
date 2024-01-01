@@ -13,7 +13,13 @@
 
 #include <iostream>
 
+Parser::Parser() {}
+
 Parser::Parser(vector<Token> tokens, string src) {
+    this->reset(tokens, src);
+}
+
+void Parser::reset(vector<Token> tokens, string src) {
     this->tokens = tokens;
     this->src = src;
 

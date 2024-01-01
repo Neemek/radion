@@ -31,28 +31,28 @@ Interpreter::Interpreter()
         return NIL_VALUE; }));
 }
 
-std::any Interpreter::evaluate(Node *program)
+std::any Interpreter::evaluate(Node *programNode)
 {
     std::any ret;
 
-    switch (program->type)
+    switch (programNode->type)
     {
     case NodeType::Arithmetic:
-        ret = this->evaluate_arithemtic((ArithmeticNode *)program); break;
+        ret = this->evaluate_arithemtic((ArithmeticNode *)programNode); break;
 
     // Literals
     case NodeType::BooleanLiteral:
-        ret = ((BooleanLiteralNode *)program)->boolean; break;
+        ret = ((BooleanLiteralNode *)programNode)->boolean; break;
     case NodeType::IntLiteral:
-        ret = ((IntLiteralNode *)program)->number; break;
+        ret = ((IntLiteralNode *)programNode)->number; break;
     case NodeType::StringLiteral:
-        ret = ((StringLiteralNode *)program)->string; break;
+        ret = ((StringLiteralNode *)programNode)->string; break;
     case NodeType::NilLiteral:
         ret = NIL_VALUE; break;
 
     case NodeType::Block:
     {
-        BlockNode *block = (BlockNode *)program;
+        BlockNode *block = (BlockNode *)programNode;
         for (int i = 0; i < block->statements.size(); i++)
         {
             Node *statement = block->statements.at(i);
@@ -63,7 +63,7 @@ std::any Interpreter::evaluate(Node *program)
 
     case NodeType::If:
     {
-        IfNode *conditional = (IfNode *)program;
+        IfNode *conditional = (IfNode *)programNode;
         std::any condition = this->evaluate(conditional->condition);
         if ((condition.type() == typeid(bool) && std::any_cast<bool>(condition)) || (condition.type() == typeid(int) && std::any_cast<int>(condition) != 0))
             this->evaluate(conditional->logic);
@@ -74,43 +74,49 @@ std::any Interpreter::evaluate(Node *program)
 
     case NodeType::Reference:
     {
-        ReferenceNode *reference = (ReferenceNode *)program;
+        ReferenceNode *reference = (ReferenceNode *)programNode;
         ret = this->symbols[reference->name];
     }
     break;
     case NodeType::Define:
     {
-        DefineNode *definition = (DefineNode *)program;
+        DefineNode *definition = (DefineNode *)programNode;
         this->symbols[definition->name] = new DefinedCallable(definition->params, definition->logic);
     }
     break;
 
     case NodeType::Call:
     {
-        CallNode *call = static_cast<CallNode*>(program);
+        CallNode *call = static_cast<CallNode*>(programNode);
         std::any func = this->symbols[call->name];
+        Callable* callable = nullptr;
 
         try {
-            NativeCallable* callable = std::any_cast<NativeCallable*>(func);
-            std::vector<std::any> calledArgs;
+            callable = std::any_cast<NativeCallable*>(func);
+        } catch (const std::bad_any_cast& _e) {}
 
-            for (int i = 0; i < MAX_PARAMS && call->params[i] != 0; i++)
-            {
-                calledArgs.push_back(this->evaluate(call->params[i]));
+        if (callable == nullptr) {
+            try {
+                callable = std::any_cast<DefinedCallable*>(func);
+            } catch (const std::bad_any_cast& e) {
+                // report error
             }
-
-            ret = callable->call(this, &calledArgs[0]);
-        } catch (const std::bad_any_cast& e) {
-            // error "func is not callable"
-            std::cout << "func " << call->name << " is not callable" << std::endl;
-            ret = ERROR;
         }
+
+        std::vector<std::any> calledArgs;
+
+        for (int i = 0; i < MAX_PARAMS && call->params[i] != 0; i++)
+        {
+            calledArgs.push_back(this->evaluate(call->params[i]));
+        }
+
+        ret = callable->call(this, &calledArgs[0]);
 
     }
     break;
     case NodeType::Loop:
     {
-        LoopNode *loop = (LoopNode *)program;
+        LoopNode *loop = (LoopNode *)programNode;
         while (std::any_cast<bool>(this->evaluate(loop->condition)))
         {
             this->evaluate(loop->logic);
@@ -121,15 +127,15 @@ std::any Interpreter::evaluate(Node *program)
         break;
     }
     // clean up node
-    //delete program;
+    delete programNode;
     
     return ret;
 }
 
-int Interpreter::evaluate_arithemtic(ArithmeticNode *program)
+int Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
 {
-    std::any left = this->evaluate(program->left);
-    std::any right = this->evaluate(program->right);
+    std::any left = this->evaluate(arithmeticNode->left);
+    std::any right = this->evaluate(arithmeticNode->right);
 
     if (!left.has_value() || !right.has_value() || left.type() != typeid(int) || right.type() != typeid(int))
     {
@@ -140,7 +146,7 @@ int Interpreter::evaluate_arithemtic(ArithmeticNode *program)
     int a = std::any_cast<int>(left);
     int b = std::any_cast<int>(right);
 
-    switch (program->op)
+    switch (arithmeticNode->op)
     {
     case ArithmeticOperation::ADD:
         return a + b;

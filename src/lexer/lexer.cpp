@@ -115,13 +115,19 @@ vector<Token> Lexer::lex(std::string src)
                 }
 
                 const char* var = v.c_str();
+                // conditionals
                 if (!strcmp(var, "if")) tokens.push_back(Token(TokenType::IF, var, start));
                 else if (!strcmp(var, "else")) tokens.push_back(Token(TokenType::ELSE, var, start));
+                // Literal values
                 else if (!strcmp(var, "true")) tokens.push_back(Token(TokenType::TRUE, var, start));
                 else if (!strcmp(var, "false")) tokens.push_back(Token(TokenType::FALSE, var, start));
                 else if (!strcmp(var, "nil")) tokens.push_back(Token(TokenType::NIL, var, start));
+                // Loops
                 else if (!strcmp(var, "for")) tokens.push_back(Token(TokenType::FOR, var, start));
                 else if (!strcmp(var, "while")) tokens.push_back(Token(TokenType::WHILE, var, start));
+                // Function
+                else if (!strcmp(var, "return")) tokens.push_back(Token(TokenType::RETURN, var, start));
+                // Variable/name
                 else tokens.push_back(Token(TokenType::NAME, var, start));
             }
             break;
