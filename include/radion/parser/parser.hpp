@@ -6,9 +6,12 @@
 
 class Parser {
 public:
+    Parser();
     Parser(vector<Token> tokens, string src);
     BlockNode parse();
     bool hadError = false;
+
+    void reset(vector<Token> tokens, string src);
 
 private:
     int pos = -1;

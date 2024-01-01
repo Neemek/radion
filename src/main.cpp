@@ -9,7 +9,26 @@
 int main (int argc, char *argv[]) {
 	if (argc <= 1) {
 		// Help or REPL
-		
+		//vector<Token> tokens = Lexer::lex(src);
+
+		string src;
+		Parser p;
+		Interpreter interpreter;
+
+		bool replRunning = true;
+		while (replRunning) {
+			std::cout << "> ";
+			std::cin >> src;
+
+			vector<Token> tokens = Lexer::lex(src);
+			p.reset(tokens, src);
+			BlockNode program = p.parse();
+
+			if (p.hadError) continue;
+
+			interpreter.evaluate(&program);
+			src.clear();
+		}
 	} else if (argc == 2) {
 		// Run file
 		ifstream t(argv[1]);
