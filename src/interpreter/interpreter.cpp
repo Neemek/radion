@@ -4,7 +4,6 @@
 #include "radion/interpreter/callable.hpp"
 #include "radion/interpreter/interpreter.hpp"
 
-#include "radion/parser/nodes/arithmetic.hpp"
 #include "radion/parser/nodes/literal.hpp"
 #include "radion/parser/nodes/reference.hpp"
 #include "radion/parser/nodes/functions.hpp"
@@ -17,18 +16,26 @@
 Interpreter::Interpreter()
 {
     // Native functions
-    this->symbols["print"] = new NativeCallable(std::function([](std::any arguments[])
+    this->symbols["print"] = new NativeCallable("print", std::function([](std::any arguments[])
                                                               {
-        auto out = std::any_cast<std::string>(arguments[0]);
+        auto out = value_to_string(arguments[0]);
         std::cout << out;
 
         return NIL_VALUE; }));
-    this->symbols["println"] = new NativeCallable(std::function([](std::any arguments[])
+    this->symbols["println"] = new NativeCallable("println", std::function([](std::any arguments[])
                                                                {
-        auto out = std::any_cast<std::string>(arguments[0]);
+        auto out = value_to_string(arguments[0]);
         std::cout << out << std::endl;
 
         return NIL_VALUE; }));
+}
+
+void Interpreter::exit(std::string exit_message) {
+    this->exit(new RuntimeException(exit_message));
+}
+
+void Interpreter::exit(RuntimeException* exception) {
+    throw exception;
 }
 
 std::any Interpreter::evaluate(Node *programNode)
@@ -61,6 +68,16 @@ std::any Interpreter::evaluate(Node *programNode)
     }
     break;
 
+    case NodeType::Assign:
+    {
+        AssignNode *assign = (AssignNode *)programNode;
+        std::any value = this->evaluate(assign->value);
+
+        this->symbols[assign->name] = value;
+        ret = value;
+    }
+    break;
+
     case NodeType::If:
     {
         IfNode *conditional = (IfNode *)programNode;
@@ -81,7 +98,7 @@ std::any Interpreter::evaluate(Node *programNode)
     case NodeType::Define:
     {
         DefineNode *definition = (DefineNode *)programNode;
-        this->symbols[definition->name] = new DefinedCallable(definition->params, definition->logic);
+        this->symbols[definition->name] = new DefinedCallable(definition->name.c_str(), definition->params, definition->logic);
     }
     break;
 
@@ -91,6 +108,10 @@ std::any Interpreter::evaluate(Node *programNode)
         std::any func = this->symbols[call->name];
         Callable* callable = nullptr;
 
+        if (!func.has_value()) {
+            this->exit("invalid function: "+call->name);
+        }
+
         try {
             callable = std::any_cast<NativeCallable*>(func);
         } catch (const std::bad_any_cast& _e) {}
@@ -99,7 +120,7 @@ std::any Interpreter::evaluate(Node *programNode)
             try {
                 callable = std::any_cast<DefinedCallable*>(func);
             } catch (const std::bad_any_cast& e) {
-                // report error
+                this->exit("variable "+call->name+" is not a function");
             }
         }
 
@@ -162,4 +183,35 @@ int Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
     default:
         return 0;
     }
+}
+
+Callable* get_callable(std::any value) {
+    Callable* callable;
+    try {
+        callable = std::any_cast<NativeCallable*>(value);
+    } catch (const std::bad_any_cast& _e) {
+        try {
+            callable = std::any_cast<DefinedCallable*>(value);
+        } catch (const std::bad_any_cast& e) {
+            throw RuntimeException("value is not a callable");
+        }
+    }
+
+    return callable;
+}
+
+std::string value_to_string(std::any value) {
+    if (value.type() == typeid(int)) {
+        return std::to_string(std::any_cast<int>(value));
+    } else if (value.type() == typeid(std::string)) {
+        return std::any_cast<std::string>(value);
+    } else if (value.type() == typeid(bool)) {
+        return std::any_cast<bool>(value) ? "true" : "false";
+    } else {
+        try {
+            auto callable = get_callable(value);
+            return "<Function name="+std::string(callable->name)+">";
+        } catch (const std::bad_any_cast& e) {}
+    }
+    return "";
 }

@@ -6,3 +6,9 @@ struct ReferenceNode : Node {
     ReferenceNode() : Node(NodeType::Reference) {}
     std::string name;
 };
+
+struct AssignNode : Node {
+    AssignNode() : Node(NodeType::Assign) {}
+    std::string name;
+    Node* value;
+};

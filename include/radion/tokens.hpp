@@ -42,6 +42,7 @@ enum TokenType
     ELSE,
     FOR,
     WHILE,
+    FUNC,
     RETURN,
 
     // Other

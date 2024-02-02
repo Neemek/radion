@@ -22,27 +22,33 @@ Parser::Parser(vector<Token> tokens, string src) {
 void Parser::reset(vector<Token> tokens, string src) {
     this->tokens = tokens;
     this->src = src;
+    this->pos = -1;
 
     this->nextToken();
 }
 
-BlockNode Parser::parse() {
-    BlockNode n;
+BlockNode* Parser::parse() {
+    BlockNode* n = new BlockNode();
 
     while (this->curr->type() != TokenType::END)
-        n.statements.push_back(this->block());
+        n->statements.push_back(this->block());
     
     return n;
 };
 
 void Parser::nextToken() {
+    if (this->pos+1 == this->tokens.size()) {
+        throw "Didnt stop at end of tokens!";
+    }
+
     this->prev = curr;
     this->curr = &this->tokens[++this->pos];
 }
 
 void Parser::error(Token token, const char* message) {
     // do error handling
-    std::cout << token.pos() << ": " << token.lexeme() << " " << message << std::endl;
+    std::cout << this->pos << "@" << token.pos() << ": " << token.type() << " => \"" << token.lexeme() << "\" & " << message << std::endl;
+    this->nextToken();
     this->hadError = true;
 };
 
@@ -89,15 +95,25 @@ Node* Parser::factor() {
             CallNode* n = new CallNode;
             n->name = name;
 
-            // Parse arguments 
+            // if closes immediatly, return with no arguments
+            if (this->accept(TokenType::CLOSE_PAREN)) return n;
+            
+            // otherwise, parse arguments 
             int i = 0;
             do {
                 n->params[i] = this->factor();
             } while (++i < MAX_PARAMS && this->accept(TokenType::COMMA));
 
-            this->expect(TokenType::CLOSE_PAREN, (std::string("Maximum amount of parameters is ") + to_string(MAX_PARAMS)).c_str());
+            this->expect(TokenType::CLOSE_PAREN, ("Maximum amount of parameters is "+to_string(MAX_PARAMS)).c_str());
             return n;
             
+        } else if (this->accept(TokenType::ASSIGN)) {
+            AssignNode* n = new AssignNode;
+            n->name = name;
+
+            n->value = this->expression();
+
+            return n;
         } else {
             ReferenceNode* n = new ReferenceNode;
             n->name = name;

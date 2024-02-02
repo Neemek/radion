@@ -110,7 +110,7 @@ vector<Token> Lexer::lex(std::string src)
             } else if (isalpha(c.at(0))) {
                 string v;
                 v += c;
-                while (pos+1 < src.length() && isalpha(src.at(pos+1))) {
+                while (pos+1 < src.length() && (isalpha(src.at(pos+1)) || (const char*)src.at(pos+1) == "_")) {
                     v += src.at(++pos);
                 }
 
@@ -126,6 +126,7 @@ vector<Token> Lexer::lex(std::string src)
                 else if (!strcmp(var, "for")) tokens.push_back(Token(TokenType::FOR, var, start));
                 else if (!strcmp(var, "while")) tokens.push_back(Token(TokenType::WHILE, var, start));
                 // Function
+                else if (!strcmp(var, "func")) tokens.push_back(Token(TokenType::FUNC, var, start));
                 else if (!strcmp(var, "return")) tokens.push_back(Token(TokenType::RETURN, var, start));
                 // Variable/name
                 else tokens.push_back(Token(TokenType::NAME, var, start));
@@ -135,7 +136,13 @@ vector<Token> Lexer::lex(std::string src)
 
         pos++;
     }
-    tokens.push_back(Token(TokenType::END, "", -1));
+    tokens.push_back(Token(TokenType::END, "", pos+1));
 
     return tokens;
+}
+
+void print_tokens(vector<Token> tokens) {
+    for (Token token : tokens) {
+        std::cout << token.pos() << ": " << token.type() << " => " << token.lexeme() << std::endl;
+    }
 }

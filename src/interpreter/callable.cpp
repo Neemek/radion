@@ -6,7 +6,8 @@ Callable::~Callable() {
 }
 
 
-DefinedCallable::DefinedCallable(std::string arguments[], Node* logic) {
+DefinedCallable::DefinedCallable(const char* name, std::string arguments[], Node* logic) {
+    this->name = name;
     std::copy(std::begin(*arguments), std::end(*arguments), std::begin(this->arguments));
     this->logic = logic;
 }
@@ -17,7 +18,8 @@ std::any DefinedCallable::call(Interpreter* interpreter, std::any arguments[]) {
 }
 
 
-NativeCallable::NativeCallable(std::function<std::any(std::any arguments[])> function) {
+NativeCallable::NativeCallable(const char* name, std::function<std::any(std::any arguments[])> function) {
+    this->name = name;
     this->logic = function;
 }
 

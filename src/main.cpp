@@ -18,16 +18,25 @@ int main (int argc, char *argv[]) {
 		bool replRunning = true;
 		while (replRunning) {
 			std::cout << "> ";
-			std::cin >> src;
+			std::getline(cin, src);
 
 			vector<Token> tokens = Lexer::lex(src);
 			p.reset(tokens, src);
-			BlockNode program = p.parse();
+			BlockNode* program = p.parse();
 
 			if (p.hadError) continue;
 
-			interpreter.evaluate(&program);
-			src.clear();
+			std::any value = interpreter.evaluate(program);
+			string out;
+
+			std::cout << value.type().name() << std::endl;
+			if (value.type() == typeid(int)) {
+				out = std::any_cast<int>(value);
+			} else if (value.type() == typeid(string)) {
+				out = std::any_cast<string>(value);
+			}
+
+			std::cout << out << std::endl;
 		}
 	} else if (argc == 2) {
 		// Run file
@@ -39,7 +48,7 @@ int main (int argc, char *argv[]) {
 		vector<Token> tokens = Lexer::lex(src);
 
 		Parser p(tokens, src);
-		BlockNode program = p.parse();
+		BlockNode* program = p.parse();
 
 		if (p.hadError) {
 			std::cout << "Program had errors, not evaluating" << std::endl;
@@ -47,7 +56,12 @@ int main (int argc, char *argv[]) {
 		}
 
 		Interpreter interpreter;
-		interpreter.evaluate(&program);
+		try {
+			interpreter.evaluate(program);
+		} catch (RuntimeException* e) { // catch error messages
+			e->print();
+			return 1;
+		}
 	}
 	
 	return 0;

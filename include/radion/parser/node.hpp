@@ -10,6 +10,7 @@ enum NodeType {
 
     // Other
     Reference,
+    Assign,
     Loop,
     Block,
     If,
