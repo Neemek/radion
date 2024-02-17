@@ -53,7 +53,7 @@ Value* Interpreter::evaluate(Node *programNode)
     case NodeType::StringLiteral:
         return new StringValue(((StringLiteralNode *)programNode)->string);
     case NodeType::NilLiteral:
-        return new NilValue;
+        return NIL_VALUE;
 
     case NodeType::Block:
     {
