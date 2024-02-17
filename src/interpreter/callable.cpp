@@ -5,7 +5,7 @@
 #include <utility>
 
 std::string Callable::to_string() {
-    return this->name;
+    return "<Function name="+std::string(this->name)+">";
 }
 
 DefinedCallable::DefinedCallable(DefinedCallable* callable) : Callable() {
@@ -14,7 +14,7 @@ DefinedCallable::DefinedCallable(DefinedCallable* callable) : Callable() {
     this->logic = callable->logic;
 }
 
-DefinedCallable::DefinedCallable(const char* name, std::vector<std::string> arguments, Node* logic) : Callable() {
+DefinedCallable::DefinedCallable(std::string name, std::vector<std::string> arguments, Node* logic) : Callable() {
     this->name = name;
     this->arguments = std::move(arguments);
     this->logic = logic;
@@ -41,7 +41,7 @@ bool DefinedCallable::equals(Value *other) {
 }
 
 
-NativeCallable::NativeCallable(const char* name, std::function<Value*(std::vector<Value*> arguments)> function) : Callable() {
+NativeCallable::NativeCallable(std::string name, std::function<Value*(std::vector<Value*> arguments)> function) : Callable() {
     this->name = name;
     this->logic = std::move(function);
 }

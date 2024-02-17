@@ -38,7 +38,8 @@ void Interpreter::exit(RuntimeException* exception) {
 
 Value* Interpreter::evaluate(Node *programNode)
 {
-    if (programNode == nullptr) this->exit("Node is a null-pointer");
+    if (programNode == nullptr)
+        this->exit("Node is a null-pointer");
 
     switch (programNode->type)
     {
@@ -105,7 +106,7 @@ Value* Interpreter::evaluate(Node *programNode)
     case NodeType::Define:
     {
         DefineNode *definition = (DefineNode *)programNode;
-        this->symbols->put(definition->name, new DefinedCallable(definition->name.c_str(), definition->params, definition->logic));
+        this->symbols->put(definition->name, new DefinedCallable(definition->name, definition->params, definition->logic));
     }
     break;
     case NodeType::InlineDef:
@@ -177,6 +178,7 @@ Value* Interpreter::evaluate(Node *programNode)
         }
         this->nofree = false;
     }
+    break;
 
     case NodeType::Range:
     {
@@ -233,10 +235,10 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
     Value* left = this->evaluate(arithmeticNode->left);
     Value* right = this->evaluate(arithmeticNode->right);
 
-    if (left != nullptr || right != nullptr)
-    {
-        this->exit("Missing value");
-    }
+    if (left == nullptr)
+        this->exit("Missing value on left side of arithmetic");
+    if (right == nullptr)
+        this->exit("Missing value on right side of arithmetic");
 
     int a;
     int b;

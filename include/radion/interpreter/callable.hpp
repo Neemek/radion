@@ -10,7 +10,7 @@ class Callable : public Value {
 public:
     Callable() : Value(ValueType::Func) {};
     virtual Value* call(Interpreter* interpreter, std::vector<Value*> arguments)=0;
-    const char* name;
+    std::string name;
 
     std::string to_string() override;
 };
@@ -19,7 +19,7 @@ public:
 class DefinedCallable : public Callable {
 public:
     DefinedCallable(DefinedCallable* callable);
-    DefinedCallable(const char* name, std::vector<std::string> arguments, Node* logic);
+    DefinedCallable(std::string name, std::vector<std::string> arguments, Node* logic);
     Value* call(Interpreter* interpreter, std::vector<Value*> arguments) override;
 
     bool equals(Value *other) override;
@@ -30,7 +30,7 @@ private:
 
 class NativeCallable : public Callable {
 public:
-    NativeCallable(const char* name, std::function<Value*(std::vector<Value*> arguments)> function);
+    NativeCallable(std::string name, std::function<Value*(std::vector<Value*> arguments)> function);
     Value* call(Interpreter* interpreter, std::vector<Value*> arguments) override;
 
     bool equals(Value *other) override;
