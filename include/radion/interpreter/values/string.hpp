@@ -3,7 +3,7 @@
 
 class StringValue : public Value {
 public:
-    StringValue() : Value(ValueType::String) {};
+    StringValue(std::string initial);
     std::string to_string() override;
 
     std::string content;

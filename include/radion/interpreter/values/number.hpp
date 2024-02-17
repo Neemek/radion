@@ -6,7 +6,8 @@
 #include "radion/interpreter/value.hpp"
 
 class IntValue : public Value {
-    IntValue() : Value(ValueType::Int) {};
+public:
+    IntValue(int initial);
 
     int number;
 
@@ -14,7 +15,8 @@ class IntValue : public Value {
 };
 
 class FloatValue : public Value {
-    FloatValue() : Value(ValueType::Float) {};
+public:
+    FloatValue(float initial);
 
     float number;
 
