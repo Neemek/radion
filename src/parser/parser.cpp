@@ -294,6 +294,15 @@ Node* Parser::statement() {
     } else if (this->accept(TokenType::FOR)) {
         ForNode* n = new ForNode;
 
+        this->expect(TokenType::NAME, "required for-loop variable name");
+        n->counter = this->prev->lexeme();
+
+        this->expect(TokenType::IN, "for loop must iterate over something");
+
+        n->values = this->range();
+
+        n->logic = this->block();
+
         return n;
     } else if (this->accept(TokenType::FUNC)) {
         DefineNode* n = new DefineNode;

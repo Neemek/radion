@@ -158,6 +158,7 @@ vector<Token> Lexer::lex(std::string src)
                 else if (!strcmp(var, "nil")) tokens.push_back(Token(TokenType::NIL, var, start));
                 // Loops
                 else if (!strcmp(var, "for")) tokens.push_back(Token(TokenType::FOR, var, start));
+                else if (!strcmp(var, "in")) tokens.push_back(Token(TokenType::IN, var, start));
                 else if (!strcmp(var, "while")) tokens.push_back(Token(TokenType::WHILE, var, start));
                 else if (!strcmp(var, "do")) tokens.push_back(Token(TokenType::DO, var, start));
                 // Function
