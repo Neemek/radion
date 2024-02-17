@@ -5,6 +5,15 @@
 #include "radion/interpreter/value.hpp"
 #include "radion/interpreter/values/stringvalue.hpp"
 #include "radion/interpreter/values/numbervalue.hpp"
+#include "radion/interpreter/values/constant.hpp"
+
+Value::Value(ValueType type) {
+    this->type = type;
+}
+
+ValueType Value::get_type() {
+    return this->type;
+}
 
 std::string StringValue::to_string() {
     return this->content;
@@ -17,4 +26,18 @@ std::string IntValue::to_string() {
 
 std::string FloatValue::to_string() {
     return std::to_string(this->number);
+}
+
+
+BooleanValue::BooleanValue(bool initial) : Value(ValueType::Boolean) {
+    this->boolean = initial;
+}
+
+std::string BooleanValue::to_string() {
+    return this->boolean ? "true" : "false";
+}
+
+
+std::string NilValue::to_string() {
+    return "nil";
 }
