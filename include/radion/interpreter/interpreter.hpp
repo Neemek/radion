@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <any>
+#include <functional>
 
 class Interpreter {
 public:
