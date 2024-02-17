@@ -4,13 +4,16 @@ project(radion)
 include_directories(include)
 add_executable(
     radion 
-    src/main.cpp 
-    src/arguments.cpp 
-    src/lexer/lexer.cpp             src/token/token.cpp 
-    src/parser/parser.cpp 
-    src/interpreter/interpreter.cpp src/interpreter/callable.cpp
-    src/interpreter/exceptions.cpp  src/interpreter/symboltable.cpp
-    src/interpreter/stlib/stlib.cpp
+        src/main.cpp
+        src/arguments.cpp
+        src/lexer/lexer.cpp
+        src/token/token.cpp
+        src/parser/parser.cpp
+        src/interpreter/interpreter.cpp
+        src/interpreter/callable.cpp
+        src/interpreter/exceptions.cpp
+        src/interpreter/symboltable.cpp
+        src/interpreter/stlib/stlib.cpp
         src/interpreter/value.cpp
         src/interpreter/values/string.cpp
         src/interpreter/values/constant.cpp
