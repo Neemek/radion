@@ -1,5 +1,6 @@
 #include "radion/arguments.hpp"
 #include <iostream>
+#include <cstring>
 
 Arguments* parseArgs(int argc, char* argv[]) {
     Arguments* args = new Arguments;
