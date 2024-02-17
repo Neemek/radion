@@ -29,6 +29,11 @@ Value* Value::expect_type(ValueType type) {
     return this;
 }
 
+template<typename T>
+T* *Value::as() {
+    return (T *)this;
+}
+
 
 std::string StringValue::to_string() {
     return this->content;

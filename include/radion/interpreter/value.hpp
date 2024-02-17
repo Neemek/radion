@@ -19,6 +19,8 @@ public:
     ValueType get_type();
     std::string get_typename();
 
+    template <typename T>
+    T* as();
     Value* expect_type(ValueType type);
 private:
     ValueType _type;
