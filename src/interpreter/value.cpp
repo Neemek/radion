@@ -17,6 +17,10 @@ ValueType Value::get_type() {
     return this->type;
 }
 
+std::string Value::get_typename() {
+    return value_type_name(this->type);
+}
+
 
 std::string StringValue::to_string() {
     return this->content;
@@ -55,4 +59,23 @@ std::string BooleanValue::to_string() {
 
 std::string NilValue::to_string() {
     return "nil";
+}
+
+std::string value_type_name(ValueType type) {
+    switch (type) {
+        case ValueType::Int:
+            return "int";
+        case ValueType::Float:
+            return "float";
+        case ValueType::Boolean:
+            return "bool";
+        case ValueType::String:
+            return "string";
+        case ValueType::Func:
+            return "func";
+        case ValueType::Class:
+            return "class";
+        case ValueType::Nil:
+            return "nil";
+    }
 }

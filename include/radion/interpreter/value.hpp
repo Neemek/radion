@@ -17,6 +17,9 @@ public:
     virtual std::string to_string()=0;
 
     ValueType get_type();
+    std::string get_typename();
 private:
     ValueType type;
 };
+
+std::string value_type_name(ValueType type);
