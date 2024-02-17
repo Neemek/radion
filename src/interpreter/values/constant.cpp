@@ -12,7 +12,15 @@ std::string BooleanValue::to_string() {
     return this->boolean ? "true" : "false";
 }
 
+bool BooleanValue::equals(Value *other) {
+    return other->has_type(ValueType::Boolean) && this->boolean == other->as<BooleanValue>()->boolean;
+}
+
 std::string NilValue::to_string() {
     return "nil";
+}
+
+bool NilValue::equals(Value *other) {
+    return other->has_type(ValueType::Nil);
 }
 

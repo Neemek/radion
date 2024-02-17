@@ -13,4 +13,5 @@ public:
     std::vector<Value*> elements;
 
     std::string to_string() override;
+    bool equals(Value *other) override;
 };

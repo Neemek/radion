@@ -21,3 +21,16 @@ std::string ListValue::to_string() {
 
     s << "]";
 }
+
+bool ListValue::equals(Value *other) {
+    if (!other->has_type(ValueType::List)) return false;
+    auto *list = other->as<ListValue>();
+
+    if (this->elements.size() != list->elements.size()) return false;
+
+    for (int i = 0; i < this->elements.size(); ++i) {
+        if (!this->elements.at(i)->equals(list->elements.at(i))) return false;
+    }
+
+    return true;
+}

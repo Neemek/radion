@@ -12,6 +12,7 @@ public:
     int number;
 
     std::string to_string() override;
+    bool equals(Value *other) override;
 };
 
 class FloatValue : public Value {
@@ -21,4 +22,5 @@ public:
     float number;
 
     std::string to_string() override;
+    bool equals(Value *other) override;
 };
