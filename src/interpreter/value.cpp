@@ -8,6 +8,7 @@
 #include "radion/interpreter/values/string.hpp"
 #include "radion/interpreter/values/number.hpp"
 #include "radion/interpreter/values/constant.hpp"
+#include "radion/interpreter/values/list.hpp"
 
 Value::Value(ValueType type) {
     this->type = type;
@@ -54,6 +55,10 @@ BooleanValue::BooleanValue(bool initial) : Value(ValueType::Boolean) {
 
 std::string BooleanValue::to_string() {
     return this->boolean ? "true" : "false";
+}
+
+ListValue::ListValue(std::vector<Value *> elements) : Value(ValueType::List) {
+    this->elements = std::move(elements);
 }
 
 
