@@ -11,6 +11,7 @@ add_executable(
     src/interpreter/interpreter.cpp src/interpreter/callable.cpp
     src/interpreter/exceptions.cpp  src/interpreter/symboltable.cpp
     src/interpreter/stlib/stlib.cpp
+        src/interpreter/value.cpp
 )
 
 set_property(TARGET radion PROPERTY DEBUG_POSTFIX d)
