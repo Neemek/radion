@@ -86,7 +86,6 @@ Value* Interpreter::evaluate(Node *programNode)
         this->symbols->put(assign->name, value);
         return value;
     }
-    break;
 
     case NodeType::If:
     {
@@ -103,7 +102,6 @@ Value* Interpreter::evaluate(Node *programNode)
         ReferenceNode *reference = (ReferenceNode *)programNode;
         return this->symbols->get(reference->name);
     }
-    break;
     case NodeType::Define:
     {
         DefineNode *definition = (DefineNode *)programNode;
@@ -115,7 +113,6 @@ Value* Interpreter::evaluate(Node *programNode)
         InlineDefNode *definition = (InlineDefNode *)programNode;
         return new DefinedCallable(definition->name.c_str(), definition->params, definition->logic);
     }
-    break;
 
     case NodeType::Return:
     {
@@ -126,10 +123,8 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::Comparison:
         return new BooleanValue(this->evaluate_boolean(programNode));
-        break;
     case NodeType::Not:
         return new BooleanValue(!this->evaluate_boolean(programNode));
-        break;
 
     case NodeType::Change:
     {
@@ -144,7 +139,6 @@ Value* Interpreter::evaluate(Node *programNode)
 
         return value;
     }
-    break;
 
     case NodeType::Call:
     {
@@ -170,7 +164,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
         return callable->call(this, calledArgs);
     }
-    break;
+
     case NodeType::Loop:
     {
         auto *loop = (LoopNode *)programNode;
@@ -207,7 +201,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
         return new ListValue(r);
     }
-    break;
+
     case NodeType::For:
     {
         ForNode *forloop = (ForNode *)programNode;
@@ -227,10 +221,6 @@ Value* Interpreter::evaluate(Node *programNode)
         }
         
     }
-    break;
-
-    default:
-        break;
     }
     // clean up node, unless specified
     if (!this->nofree) delete programNode;
