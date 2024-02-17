@@ -13,10 +13,15 @@ public:
     bool boolean;
 };
 
+static BooleanValue* BOOLEAN_TRUE = new BooleanValue(true);
+static BooleanValue* BOOLEAN_FALSE = new BooleanValue(false);
+
 class NilValue : public Value {
 public:
     NilValue() : Value(ValueType::Nil) {};
 
     std::string to_string() override;
 };
+
+static NilValue* NIL_VALUE = new NilValue;
 
