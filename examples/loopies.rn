@@ -5,7 +5,7 @@ while a < 5 do a++ {
 }
 
 for i in 0..5 {
-
+    println(i)
 }
 
 /*
