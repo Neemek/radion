@@ -18,8 +18,10 @@ public:
 
     ValueType get_type();
     std::string get_typename();
+
+    Value* expect_type(ValueType type);
 private:
-    ValueType type;
+    ValueType _type;
 };
 
 std::string value_type_name(ValueType type);

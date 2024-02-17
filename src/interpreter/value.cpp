@@ -4,6 +4,8 @@
 
 #include <utility>
 
+#include "radion/interpreter/exceptions.hpp"
+
 #include "radion/interpreter/value.hpp"
 #include "radion/interpreter/values/string.hpp"
 #include "radion/interpreter/values/number.hpp"
@@ -11,15 +13,20 @@
 #include "radion/interpreter/values/list.hpp"
 
 Value::Value(ValueType type) {
-    this->type = type;
+    this->_type = type;
 }
 
 ValueType Value::get_type() {
-    return this->type;
+    return this->_type;
 }
 
 std::string Value::get_typename() {
-    return value_type_name(this->type);
+    return value_type_name(this->_type);
+}
+
+Value* Value::expect_type(ValueType type) {
+    if (this->_type != type) throw new RuntimeException("expected type "+value_type_name(type)+", was "+ value_type_name(type));
+    return this;
 }
 
 
