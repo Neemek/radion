@@ -3,17 +3,18 @@
 #include <any>
 #include <map>
 #include <string>
+#include "radion/interpreter/value.hpp"
 
 class SymbolTable {
 public:
     SymbolTable();
     SymbolTable(SymbolTable* super);
 
-    std::any get(std::string name);
-    void put(std::string name, std::any value);
+    Value* get(std::string name);
+    void put(std::string name, Value* value);
 
     SymbolTable* sub();
     SymbolTable* super;
 private:
-    std::map<std::string, std::any> innerTable;
+    std::map<std::string, Value*> innerTable;
 };

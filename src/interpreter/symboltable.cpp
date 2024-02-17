@@ -10,15 +10,15 @@ SymbolTable::SymbolTable(SymbolTable* super) {
     this->super = super;
 }
 
-std::any SymbolTable::get(std::string name) {
+Value* SymbolTable::get(std::string name) {
     if (this->innerTable.count(name)) return this->innerTable[name];
-    if (this->super == nullptr) return std::any(); // return no value if at top
+    if (this->super == nullptr) return nullptr;
 
     return this->super->get(name);
 }
 
-void SymbolTable::put(std::string name, std::any value) {
-    if (this->super != nullptr && this->super->get(name).has_value()) this->super->put(name, value);
+void SymbolTable::put(std::string name, Value* value) {
+    if (this->super != nullptr && this->super->get(name) != nullptr) this->super->put(name, value);
     else this->innerTable[name] = value;
 }
 
