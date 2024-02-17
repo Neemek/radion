@@ -47,7 +47,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
     // Literals
     case NodeType::BooleanLiteral:
-        return new BooleanValue(((BooleanLiteralNode *)programNode)->boolean);
+        return ((BooleanLiteralNode *)programNode)->boolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     case NodeType::IntLiteral:
         return new IntValue(((IntLiteralNode *)programNode)->number);
     case NodeType::StringLiteral:
@@ -134,8 +134,6 @@ Value* Interpreter::evaluate(Node *programNode)
     case NodeType::Change:
     {
         ChangeNode *change = (ChangeNode *)programNode;
-
-        int newValue;
 
         Value* val = this->symbols->get(change->name);
         IntValue* value;
@@ -279,7 +277,7 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         return new IntValue(std::pow(a, b));
 
     default:
-        return new IntValue(0);
+        this->exit("Unimplemented arithmetic operation (type "+std::to_string(arithmeticNode->op)+")");
     }
 }
 
