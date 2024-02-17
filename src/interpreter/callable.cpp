@@ -36,6 +36,10 @@ Value* DefinedCallable::call(Interpreter* interpreter, std::vector<Value*> argum
     return ret;
 }
 
+bool DefinedCallable::equals(Value *other) {
+    return other->has_type(ValueType::Func) && this->name == other->as<Callable>()->name;
+}
+
 
 NativeCallable::NativeCallable(const char* name, std::function<Value*(std::vector<Value*> arguments)> function) : Callable() {
     this->name = name;
@@ -46,3 +50,6 @@ Value* NativeCallable::call(Interpreter* interpreter, std::vector<Value*> argume
     return this->logic(arguments);
 }
 
+bool NativeCallable::equals(Value *other) {
+    return other->has_type(ValueType::Func) && this->name == other->as<Callable>()->name;
+}
