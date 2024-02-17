@@ -16,3 +16,10 @@ struct ArithmeticNode : Node {
     Node* left;
     Node* right;
 };
+
+struct ChangeNode : Node {
+    ChangeNode() : Node(NodeType::Change) {}
+    std::string name;
+    bool ret_new = false;
+    int changeBy = 1;
+};

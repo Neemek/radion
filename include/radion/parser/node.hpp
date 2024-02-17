@@ -12,11 +12,18 @@ enum NodeType {
     Reference,
     Assign,
     Loop,
+    Range,
+    For,
     Block,
     If,
     Call,
     Define,
+    InlineDef,
+    Return,
     Arithmetic,
+    Change,
+    Comparison,
+    Not,
 };
 
 struct Node {

@@ -21,15 +21,18 @@ private:
     vector<Token> tokens;
 
     void nextToken();
-    Token* peek();
-    void error(Token token, const char* message);
+    void error(Token* token, const char* message);
 
     bool accept(TokenType type);
     void expect(TokenType type, const char* error);
 
     Node* factor();
+    Node* range();
     Node* term();
+    Node* product();
     Node* expression();
     Node* statement();
     Node* block();
 };
+
+std::string get_position_descriptor(std::string src, int pos);

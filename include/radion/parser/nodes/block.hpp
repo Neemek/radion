@@ -5,4 +5,5 @@
 struct BlockNode : Node {
     BlockNode() : Node(NodeType::Block) {}
     std::vector<Node*> statements;
+    bool isCapturing = true;
 };

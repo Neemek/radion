@@ -1,1 +1,17 @@
 println("Hello world!")
+
+func sumofoneandtwo() 1+2
+println(sumofoneandtwo())
+println(sumofoneandtwo())
+
+something = sumofoneandtwo
+println(something)
+println(something())
+a = 5
+
+while a > 0 {
+    a = a - 1
+    println(a)
+}
+
+

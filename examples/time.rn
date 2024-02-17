@@ -1,0 +1,10 @@
+
+println(time())
+
+acc = 10000
+start = time(acc)
+a = 0
+while a < 100 do a++ {
+    println("n:", a, "n^2:",  a*a)
+}
+println("Loop took", time(acc) - start, "milliseconds")

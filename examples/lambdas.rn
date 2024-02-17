@@ -1,0 +1,9 @@
+
+lambda = func(x) x*x + 2*x + 5
+
+startx = 0
+stopx = 5
+
+while (startx < stopx) {
+    println(lambda(startx++))
+}

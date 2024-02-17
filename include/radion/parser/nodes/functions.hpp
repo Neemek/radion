@@ -9,11 +9,21 @@ struct CallNode : Node {
     CallNode(NodeType t) : Node(t) {}
     
     std::string name;
-    Node* params[MAX_PARAMS];
+    std::vector<Node*> params;
 };
 
 struct DefineNode : CallNode {
     DefineNode() : CallNode(NodeType::Define) {}
+    DefineNode(NodeType t) : CallNode(t) {}
     Node* logic;
-    std::string params[MAX_PARAMS];
+    std::vector<std::string> params;
+};
+
+struct ReturnNode : Node {
+    ReturnNode() : Node(NodeType::Return) {}
+    Node* value;
+};
+
+struct InlineDefNode : DefineNode {
+    InlineDefNode() : DefineNode(NodeType::InlineDef) {}
 };

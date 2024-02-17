@@ -1,13 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "radion/arguments.hpp"
 #include "radion/lexer.hpp"
 #include "radion/parser/parser.hpp"
 #include "radion/interpreter/interpreter.hpp"
 #include "radion/parser/nodes/block.hpp"
 
 int main (int argc, char *argv[]) {
-	if (argc <= 1) {
+	Arguments* args = parseArgs(argc, argv);
+
+#ifdef NDEBUG
+	if (args->entryPath == nullptr) {
 		// Help or REPL
 		//vector<Token> tokens = Lexer::lex(src);
 
@@ -38,14 +42,26 @@ int main (int argc, char *argv[]) {
 
 			std::cout << out << std::endl;
 		}
-	} else if (argc == 2) {
+	} else 
+#endif
+	{
 		// Run file
-		ifstream t(argv[1]);
+#ifndef NDEBUG
+		ifstream t("/Users/neemek/Code/radion/examples/helloworld.rn");
+#else
+		ifstream t(args->entryPath);
+#endif
 		std::stringstream buffer;
 		buffer << t.rdbuf();
 
 		string src = buffer.str();
 		vector<Token> tokens = Lexer::lex(src);
+
+		if (args->printTokens) {
+			std::cout << "-- tokens --" << std::endl;
+			print_tokens(src, tokens);
+			std::cout << "-- program output --" << std::endl;
+		}
 
 		Parser p(tokens, src);
 		BlockNode* program = p.parse();
@@ -53,6 +69,11 @@ int main (int argc, char *argv[]) {
 		if (p.hadError) {
 			std::cout << "Program had errors, not evaluating" << std::endl;
 			return 1;
+		}
+
+		if (args->dontRun) {
+			std::cout << "not running" << std::endl;
+			return 0;
 		}
 
 		Interpreter interpreter;
