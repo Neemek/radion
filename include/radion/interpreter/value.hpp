@@ -3,8 +3,8 @@
 
 
 enum ValueType {
-    Int,    Float,  String,
-    Class,  Func
+    Int,    Float,  Boolean,
+    String, Class,  Func,
 };
 
 class Value {
