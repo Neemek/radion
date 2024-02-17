@@ -43,5 +43,7 @@ std::string value_type_name(ValueType type) {
             return "class";
         case ValueType::Nil:
             return "nil";
+        case ValueType::List:
+            return "list";
     }
 }
