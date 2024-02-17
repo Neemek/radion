@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 #include <functional>
-#include <cxxabi.h>
 #include "radion/interpreter/callable.hpp"
 #include "radion/interpreter/interpreter.hpp"
 
@@ -333,7 +332,7 @@ void Interpreter::table_ascend() {
 template <typename T>
 T Interpreter::expect_any(std::any v) {
     if (v.type() == typeid(T)) return std::any_cast<T>(v);
-    else this->exit("Expected type to be "s + get_typename(typeid(T)) + ", got " + get_typename(v.type()));
+    else this->exit("Expected type to be "s + typeid(T).name() + ", got " + v.type().name());
 }
 
 std::string value_to_string(std::any value) {
@@ -351,19 +350,8 @@ std::string value_to_string(std::any value) {
             return "<Function name="+std::string(callable->name)+">";
         } catch (const RuntimeException* e) {}
     }
-    throw new RuntimeException("Unimplented value to string conversion for type "s+get_typename(value.type()));
+    throw new RuntimeException("Unimplented value to string conversion for type "s+value.type().name());
     return "";
-}
-
-std::string get_typename(const std::type_info &t) {
-    int status;
-    std::string name = t.name();
-    char *demangled  = abi::__cxa_demangle(name.c_str(), NULL, NULL, &status);
-    if (status == 0) {
-        name = demangled;
-        std::free(demangled);
-    }
-    return name;
 }
 
 bool any_equals(std::any a, std::any b) {
