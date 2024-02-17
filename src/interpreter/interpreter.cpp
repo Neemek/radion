@@ -223,7 +223,7 @@ Value* Interpreter::evaluate(Node *programNode)
         } else {
             this->exit("Cannot iterate over value: " + things->to_string());
         }
-        
+        break;
     }
     }
     // clean up node, unless specified
