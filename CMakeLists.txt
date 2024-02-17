@@ -5,10 +5,12 @@ include_directories(include)
 add_executable(
     radion 
     src/main.cpp 
-    src/lexer/lexer.cpp src/token/token.cpp 
+    src/arguments.cpp 
+    src/lexer/lexer.cpp             src/token/token.cpp 
     src/parser/parser.cpp 
     src/interpreter/interpreter.cpp src/interpreter/callable.cpp
-    src/interpreter/exceptions.cpp
+    src/interpreter/exceptions.cpp  src/interpreter/symboltable.cpp
+    src/interpreter/stlib/stlib.cpp
 )
 
 set_property(TARGET radion PROPERTY DEBUG_POSTFIX d)
