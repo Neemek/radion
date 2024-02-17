@@ -37,7 +37,14 @@ vector<Token> Lexer::lex(std::string src)
             tokens.push_back(Token(TokenType::STAR, c, start));
             break;
         case '/':
-            tokens.push_back(Token(TokenType::SLASH, c, start));
+            if (pos+1 < src.length() && src.at(pos+1) == '*') {
+                do {
+                    pos++;
+                } while (pos+1 < src.length() && !(src.at(pos) == '*' && src.at(pos+1) == '/'));
+                pos++;
+            } else {
+                tokens.push_back(Token(TokenType::SLASH, c, start));
+            }
             break;
         
         // Truthyness
