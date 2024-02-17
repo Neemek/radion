@@ -26,14 +26,6 @@ bool Value::has_type(ValueType type) {
     return this->get_type() == type;
 }
 
-template<typename T>
-T* Value::as() {
-    return (T *)this;
-}
-
-
-
-
 
 std::string value_type_name(ValueType type) {
     switch (type) {

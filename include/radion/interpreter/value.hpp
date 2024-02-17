@@ -22,7 +22,10 @@ public:
     std::string get_typename();
 
     template <typename T>
-    T* as();
+    T* as() {
+        return (T *)this;
+    };
+
     Value* expect_type(ValueType type);
 private:
     ValueType _type;
