@@ -31,7 +31,7 @@ Value* Value::expect_type(ValueType type) {
 }
 
 template<typename T>
-T* *Value::as() {
+T* Value::as() {
     return (T *)this;
 }
 
