@@ -2,20 +2,21 @@
 #include <any>
 #include <algorithm>
 #include <iterator>
+#include <utility>
 
-Callable::~Callable() {
+std::string Callable::to_string() {
+    return this->name;
 }
 
-
-DefinedCallable::DefinedCallable(DefinedCallable* callable) {
+DefinedCallable::DefinedCallable(DefinedCallable* callable) : Callable() {
     this->name = callable->name;
     this->arguments = callable->arguments;
     this->logic = callable->logic;
 }
 
-DefinedCallable::DefinedCallable(const char* name, std::vector<std::string> arguments, Node* logic) {
+DefinedCallable::DefinedCallable(const char* name, std::vector<std::string> arguments, Node* logic) : Callable() {
     this->name = name;
-    this->arguments = arguments;
+    this->arguments = std::move(arguments);
     this->logic = logic;
 }
 
@@ -36,9 +37,9 @@ std::any DefinedCallable::call(Interpreter* interpreter, std::vector<std::any> a
 }
 
 
-NativeCallable::NativeCallable(const char* name, std::function<std::any(std::vector<std::any> arguments)> function) {
+NativeCallable::NativeCallable(const char* name, std::function<std::any(std::vector<std::any> arguments)> function) : Callable() {
     this->name = name;
-    this->logic = function;
+    this->logic = std::move(function);
 }
 
 std::any NativeCallable::call(Interpreter* interpreter, std::vector<std::any> arguments) {
@@ -59,3 +60,5 @@ Callable* get_callable(std::any value) {
 
     return callable;
 }
+
+

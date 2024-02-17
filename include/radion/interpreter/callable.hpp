@@ -4,13 +4,16 @@
 #include <functional>
 
 #include "radion/interpreter/interpreter.hpp"
+#include "radion/interpreter/value.hpp"
 #include "radion/parser/nodes/functions.hpp"
 
-class Callable {
+class Callable : public Value {
 public:
-    virtual std::any call(Interpreter* interpreter, std::vector<std::any> arguments) = 0;
-    virtual ~Callable();
+    Callable() : Value(ValueType::Func) {};
+    virtual std::any call(Interpreter* interpreter, std::vector<std::any> arguments)=0;
     const char* name;
+
+    std::string to_string() override;
 };
 
 
