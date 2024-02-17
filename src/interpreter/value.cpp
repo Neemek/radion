@@ -3,8 +3,8 @@
 //
 
 #include "radion/interpreter/value.hpp"
-#include "radion/interpreter/values/stringvalue.hpp"
-#include "radion/interpreter/values/numbervalue.hpp"
+#include "radion/interpreter/values/string.hpp"
+#include "radion/interpreter/values/number.hpp"
 #include "radion/interpreter/values/constant.hpp"
 
 Value::Value(ValueType type) {
