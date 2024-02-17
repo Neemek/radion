@@ -3,6 +3,7 @@
 //
 
 #include "radion/interpreter/values/list.hpp"
+#include <vector>
 #include <sstream>
 
 ListValue::ListValue(std::vector<Value *> elements) : Value(ValueType::List) {
