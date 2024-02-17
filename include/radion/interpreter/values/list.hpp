@@ -4,6 +4,7 @@
 #pragma once
 
 #include "radion/interpreter/value.hpp"
+#include <vector>
 
 class ListValue : public Value {
 public:
