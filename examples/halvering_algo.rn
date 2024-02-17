@@ -1,0 +1,19 @@
+func halvering(f, a, b, n) {
+    midten = (b - a) / 2 + a
+    println(midten)
+    println(n)
+    if (n <= 0) return midten
+
+    if (f(midten) < 0) {
+        println("a")
+        a = midten
+    } else {
+        println("b")
+        b = midten
+    }
+
+    return halvering(f, a, b, n - 1)
+}
+
+
+println(halvering(func(x) x-5, 0, 100, 1))

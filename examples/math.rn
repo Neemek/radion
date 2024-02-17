@@ -1,0 +1,13 @@
+
+
+func sum(a, b) a + b
+
+println(sum(5, 6))
+
+func fib(n) {
+    if n <= 2 return n
+
+    return fib(n-1) + fib(n-2)
+}
+
+println(fib(2))

@@ -11,3 +11,5 @@ public:
 	static vector<Token> lex(std::string src);
 };
 
+void print_tokens(std::string src, vector<Token> tokens);
+

@@ -1,0 +1,12 @@
+string = "Hello world!"
+
+println(string)
+
+other = string + " I'm alive :D"
+
+println(other)
+
+for i in other {
+    print(i, "")
+}
+println()

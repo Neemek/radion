@@ -17,7 +17,9 @@ enum TokenType
 
     // Arithmetics
     PLUS,
+    DOUBLE_PLUS,
     MINUS,
+    DOUBLE_MINUS,
     STAR,
     SLASH,
     POWER,
@@ -42,8 +44,13 @@ enum TokenType
     ELSE,
     FOR,
     WHILE,
+    DO,
+    FUNC,
+    RETURN,
 
     // Other
+    DOT,
+    DOUBLE_DOT,
     COMMA,
     END,
 };

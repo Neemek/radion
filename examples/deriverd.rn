@@ -1,0 +1,6 @@
+
+f = func(x) x*x + 3*x + 6
+
+func derive(fn, x, a) (fn(x+a) - fn(x)) / a
+
+println(derive(f, 5, 1))

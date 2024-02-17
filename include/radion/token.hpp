@@ -23,3 +23,5 @@ private:
 	string _lexeme;
 	int _pos;
 };
+
+std::string ttype_to_string(TokenType type);

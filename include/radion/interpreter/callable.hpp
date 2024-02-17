@@ -8,15 +8,17 @@
 
 class Callable {
 public:
-    virtual std::any call(Interpreter* interpreter, std::any arguments[]) = 0;
+    virtual std::any call(Interpreter* interpreter, std::vector<std::any> arguments) = 0;
     virtual ~Callable();
+    const char* name;
 };
 
 
 class DefinedCallable : public Callable {
 public:
-    DefinedCallable(std::string arguments[], Node* logic);
-    std::any call(Interpreter* interpreter, std::any arguments[]) override;
+    DefinedCallable(DefinedCallable* callable);
+    DefinedCallable(const char* name, std::vector<std::string> arguments, Node* logic);
+    std::any call(Interpreter* interpreter, std::vector<std::any> arguments) override;
 private:
     Node* logic;
     std::vector<std::string> arguments;
@@ -24,8 +26,10 @@ private:
 
 class NativeCallable : public Callable {
 public:
-    NativeCallable(std::function<std::any(std::any arguments[])> function);
-    std::any call(Interpreter* interpreter, std::any arguments[]) override;
+    NativeCallable(const char* name, std::function<std::any(std::vector<std::any> arguments)> function);
+    std::any call(Interpreter* interpreter, std::vector<std::any> arguments) override;
 private:
-    std::function<std::any(std::any arguments[])> logic;
+    std::function<std::any(std::vector<std::any> arguments)> logic;
 };
+
+Callable* get_callable(std::any value);

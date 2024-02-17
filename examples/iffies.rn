@@ -1,0 +1,45 @@
+
+a = 3 + 2
+
+if a == 5 {
+    println("2 + 3 is equal to 5!")
+} else (
+    println("2 + 3 is not equal to 5? huh????")
+)
+
+b = 7
+
+if a > b {
+    println("a is greater than b")
+} else {
+    println("a is less than or equal to b")
+}
+
+if a == 1 {
+    println("a is odd")
+} else if a == 2 {
+    println("a is even")
+} else if a == 3 {
+    println("a is odd")
+} else if a == 4 {
+    println("a is even")
+} else if a == 5 {
+    println("a is odd")
+} else if a == 6 {
+    println("a is even")
+} else if a == 7 {
+    println("a is odd")
+} else if a == 8 {
+    println("a is even")
+} else if a == 9 {
+    println("a is odd")
+} else if a == 10 {
+    println("a is even")
+}
+
+
+if a <= 5 {
+    println("a is less than or equal to 5")
+}
+
+
