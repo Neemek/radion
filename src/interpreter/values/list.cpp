@@ -20,6 +20,7 @@ std::string ListValue::to_string() {
     }
 
     s << "]";
+    return s.str();
 }
 
 bool ListValue::equals(Value *other) {
