@@ -83,6 +83,10 @@ vector<Token> Lexer::lex(std::string src)
         case '%':
             tokens.push_back(Token(TokenType::PERCENTAGE, c, start));
             break;
+
+        case '#':
+            while (pos + 1 < src.size() && src.at(pos+1) != '\n') pos++;
+            break;
         
         case '"':
             {
