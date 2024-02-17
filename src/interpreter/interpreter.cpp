@@ -295,9 +295,9 @@ bool Interpreter::evaluate_boolean(Node* expression) {
         switch (comparison->comparison)
         {
         case ComparisonType::Equals:
-            return any_equals(a, b);
-        case ComparisonType::NotEquals: 
-            return !any_equals(a, b);
+            return a->equals(b);
+        case ComparisonType::NotEquals:
+            return !a->equals(b);
 
         case ComparisonType::Greater:
             return cmp_any_int(a, b, [](int l, int r) { return l > r; });
