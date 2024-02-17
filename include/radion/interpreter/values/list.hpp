@@ -11,4 +11,6 @@ public:
     ListValue(std::vector<Value*> elements);
 
     std::vector<Value*> elements;
+
+    std::string to_string() override;
 };
