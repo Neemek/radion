@@ -43,6 +43,7 @@ enum TokenType
     IF,
     ELSE,
     FOR,
+    IN,
     WHILE,
     DO,
     FUNC,

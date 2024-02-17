@@ -188,11 +188,13 @@ Value* Interpreter::evaluate(Node *programNode)
 
         auto *fromv = this->evaluate(range->from)->expect_type(ValueType::Int)->as<IntValue>();
         auto *tov = this->evaluate(range->to)->expect_type(ValueType::Int)->as<IntValue>();
-        auto *increasev = this->evaluate(range->increase)->expect_type(ValueType::Int)->as<IntValue>();
+
+        int increase;
+        if (range->increase != nullptr) increase = this->evaluate(range->increase)->expect_type(ValueType::Int)->as<IntValue>()->number;
+        else increase = 1;
 
         int from = fromv->number;
         int to = tov->number;
-        int increase = increasev->number;
 
         while (increase < 0
                 ? from > to
@@ -221,7 +223,7 @@ Value* Interpreter::evaluate(Node *programNode)
         } else {
             this->exit("Cannot iterate over value: " + things->to_string());
         }
-        
+        break;
     }
     }
     // clean up node, unless specified
