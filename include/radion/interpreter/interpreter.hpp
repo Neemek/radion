@@ -26,6 +26,7 @@ private:
     void exit(RuntimeException* exception);
 
     Value* returned;
+    Node *current_node;
 };
 
 bool any_equals(Value* a, Value* b);

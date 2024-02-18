@@ -29,7 +29,7 @@ Interpreter::Interpreter()
 }
 
 void Interpreter::exit(std::string exit_message) {
-    this->exit(new RuntimeException(exit_message));
+    this->exit(new RuntimeException(exit_message, this->current_node));
 }
 
 void Interpreter::exit(RuntimeException* exception) {
@@ -40,6 +40,8 @@ Value* Interpreter::evaluate(Node *programNode)
 {
     if (programNode == nullptr)
         this->exit("Node is a null-pointer");
+
+    this->current_node = programNode;
 
     switch (programNode->type)
     {
