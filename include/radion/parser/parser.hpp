@@ -20,8 +20,8 @@ private:
     Token* curr;
     vector<Token> tokens;
 
-    uint32_t start = 0;
-    uint32_t end = 0;
+    int start = 0;
+    int end = 0;
 
     void nextToken();
     void error(Token* token, const char* message);
