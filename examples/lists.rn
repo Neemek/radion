@@ -8,4 +8,7 @@ for i in list_of_numbers {
 }
 
 println(0..15)
-# println(zip(0..3, list_of_numbers))
+
+println(zip(0..3, list_of_numbers))
+println(zip(0..2, list_of_numbers))
+println(zip(0..5, list_of_numbers))
