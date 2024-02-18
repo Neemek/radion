@@ -80,7 +80,7 @@ int main (int argc, char *argv[]) {
 		try {
 			interpreter.evaluate(program);
 		} catch (RuntimeException* e) { // catch error messages
-			e->print();
+			e->print(src);
 			return 1;
 		}
 	}
