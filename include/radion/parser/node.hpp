@@ -34,5 +34,5 @@ struct Node {
     NodeType type;
 
     int start;
-    int stop;
+    int end;
 };
