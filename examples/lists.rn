@@ -2,3 +2,7 @@
 list_of_numbers = [1, 2, 3]
 
 println(list_of_numbers)
+
+for i in list_of_numbers {
+    println(i, "is a number")
+}
