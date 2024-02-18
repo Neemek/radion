@@ -110,6 +110,18 @@ Node* Parser::factor() {
         return n;
     } else if (this->accept(TokenType::NIL)) {
         return new NilLiteralNode;
+    } else if (this->accept(TokenType::OPEN_BRACKET)) {
+        auto *n = new ListLiteralNode();
+
+        if (this->accept(TokenType::CLOSE_BRACKET)) return n;
+
+        do {
+            n->elements.push_back(this->expression());
+        } while (this->accept(TokenType::COMMA));
+
+        this->expect(TokenType::CLOSE_BRACKET, "list must have closing bracket");
+
+        return n;
     } else if (this->accept(TokenType::NAME)) {
         std::string name = this->prev->lexeme();
         // Differentiate between reference and function call

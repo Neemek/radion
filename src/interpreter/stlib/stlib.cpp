@@ -2,12 +2,13 @@
 
 #include <iostream>
 #include <functional>
+#include <vector>
 #include <chrono>
 
 #include "radion/interpreter/callable.hpp"
 #include "radion/interpreter/values/constant.hpp"
 #include "radion/interpreter/values/number.hpp"
-#include "radion/parser/nodes/literal.hpp"
+#include "radion/interpreter/values/list.hpp"
 
 #define NATIVE_FUNC(name, argname, content) top->put(name, new NativeCallable(name, [](std::vector<Value*> argname) { content }))
 
@@ -42,5 +43,28 @@ void registerStandardLibrary(SymbolTable* top) {
         
 
         return new IntValue((int)t);
+    });
+
+    NATIVE_FUNC("zip", args, {
+        auto *zipped = new ListValue;
+
+        for (Value *arg : args) {
+            auto *l = arg->expect_type(ValueType::List)->as<ListValue>();
+            std::vector<Value*> elements = l->elements;
+
+            for (int i = 0; i < elements.size(); ++i) {
+                auto value = elements.at(i);
+
+                if (zipped->elements.size() >= i) {
+                    elements.push_back(new ListValue());
+                }
+
+                auto layer = elements.at(i);
+
+                layer->as<ListValue>()->elements.push_back(value);
+            }
+        }
+
+        return zipped;
     });
 }

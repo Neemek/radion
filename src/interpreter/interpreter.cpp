@@ -55,6 +55,17 @@ Value* Interpreter::evaluate(Node *programNode)
         return new StringValue(((StringLiteralNode *)programNode)->string);
     case NodeType::NilLiteral:
         return NIL_VALUE;
+    case NodeType::ListLiteral:
+    {
+        auto *node = (ListLiteralNode *)programNode;
+        auto *list = new ListValue;
+
+        for (Node *element : node->elements) {
+            list->elements.push_back(this->evaluate(element));
+        }
+
+        return list;
+    }
 
     case NodeType::Block:
     {
