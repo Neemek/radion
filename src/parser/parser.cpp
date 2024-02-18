@@ -44,6 +44,9 @@ void Parser::nextToken() {
 
     this->prev = curr;
     this->curr = &this->tokens[++this->pos];
+
+    this->start = this->curr->pos();
+    this->end = this->start + this->curr->lexeme().size();
 }
 
 std::string get_position_descriptor(std::string src, int pos) {
