@@ -25,8 +25,8 @@ private:
     void exit(std::string exit_message);
     void exit(RuntimeException* exception);
 
-    Value* returned;
-    Node *current_node;
+    Value* returned = nullptr;
+    Node *current_node = nullptr;
 };
 
 bool any_equals(Value* a, Value* b);
