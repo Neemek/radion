@@ -15,7 +15,7 @@ RuntimeException::RuntimeException(std::string message, Node *error_causer) {
 }
 
 void RuntimeException::print(std::string src) {
-    std::cout << "\u001b[31m" << "RuntimeError: " << message << "\u001b[37m" << std::endl;
+    std::cout << "\u001b[31m" << "RuntimeError: " << message << "\u001b[0m" << std::endl;
 
     if (this->error_causer == nullptr) return;
 
@@ -32,17 +32,16 @@ void RuntimeException::print(std::string src) {
         }
     }
 
-    while (src.at(i) != '\n' && src.size() < i) i++;
+    while (src.at(i) != '\n' && i < src.size()) i++;
 
-    line = src.substr(linepos, i);
+    line = src.substr(linepos+1, i-linepos-1);
 
     std::string position_descriptor = get_position_descriptor(src, this->error_causer->start);
 
-    std::cout << position_descriptor << "\t " << line << std::endl;
-    std::cout << "\t ";
+    std::cout << position_descriptor << " " << line << std::endl;
 
-    for (int j = 0; j < this->error_causer->start - linepos; ++j) std::cout << " ";
-    for (int j = 0; j < this->error_causer->end - this->error_causer->end; ++j) std::cout << "^";
+    for (int j = 0; j < this->error_causer->start - linepos + position_descriptor.size(); ++j) std::cout << " ";
+    for (int j = 0; j < this->error_causer->end - this->error_causer->start - 2; ++j) std::cout << "^";
 
     std::cout << std::endl;
 }
