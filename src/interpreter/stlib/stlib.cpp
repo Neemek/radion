@@ -10,7 +10,7 @@
 #include "radion/interpreter/values/number.hpp"
 #include "radion/interpreter/values/list.hpp"
 
-#define NATIVE_FUNC(name, argname, content) top->put(name, new NativeCallable(name, [](std::vector<Value*> argname) { content }))
+
 
 void print(std::vector<Value*> args) {
     for (int i = 0; i < args.size(); i++) {
@@ -34,7 +34,8 @@ void registerStandardLibrary(SymbolTable* top) {
 
         return NIL_VALUE; }));
 
-    NATIVE_FUNC("time", args, {
+
+    top->put("time", new NativeCallable("time", [](std::vector<Value*> args) {
         long t = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()
         ).count();
@@ -43,28 +44,36 @@ void registerStandardLibrary(SymbolTable* top) {
         
 
         return new IntValue((int)t);
-    });
+    }));
 
-    NATIVE_FUNC("zip", args, {
+    top->put("zip", new NativeCallable("zip", [](std::vector<Value*> args) {
         auto *zipped = new ListValue;
 
+        int max_size = 0;
         for (Value *arg : args) {
-            auto *l = arg->expect_type(ValueType::List)->as<ListValue>();
+            auto *listArg = arg->expect_type(ValueType::List)->as<ListValue>();
+            if (listArg->elements.size() > max_size) max_size = (int)listArg->elements.size();
+        }
+        while (zipped->elements.size() < max_size) zipped->elements.push_back(new ListValue);
+
+        for (Value *arg : args) {
+            auto *l = arg->as<ListValue>();
             std::vector<Value*> elements = l->elements;
 
-            for (int i = 0; i < elements.size(); ++i) {
-                auto value = elements.at(i);
+            for (int i = 0; i < zipped->elements.size(); ++i) {
+                auto layer = zipped->elements.at(i)->as<ListValue>();
 
-                if (zipped->elements.size() >= i) {
-                    elements.push_back(new ListValue());
+                if (elements.size() <= i) {
+                    layer->elements.push_back(NIL_VALUE);
+                    continue;
                 }
 
-                auto layer = elements.at(i);
+                auto value = elements.at(i);
 
-                layer->as<ListValue>()->elements.push_back(value);
+                layer->elements.push_back(value);
             }
         }
 
         return zipped;
-    });
+    }));
 }
