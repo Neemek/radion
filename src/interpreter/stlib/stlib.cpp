@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
+#include <chrono>
 
 #include "radion/interpreter/callable.hpp"
 #include "radion/interpreter/values/constant.hpp"
