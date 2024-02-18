@@ -7,6 +7,7 @@ enum NodeType {
     StringLiteral,
     BooleanLiteral,
     NilLiteral,
+    ListLiteral,
 
     // Other
     Reference,

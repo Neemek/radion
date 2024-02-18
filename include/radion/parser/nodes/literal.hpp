@@ -1,6 +1,7 @@
 #pragma once
 #include "radion/parser/node.hpp"
 #include <string>
+#include <vector>
 
 struct IntLiteralNode : Node {
     IntLiteralNode() : Node(NodeType::IntLiteral) {}
@@ -19,4 +20,9 @@ struct BooleanLiteralNode : Node {
 
 struct NilLiteralNode : Node {
     NilLiteralNode() : Node(NodeType::NilLiteral) {}
+};
+
+struct ListLiteralNode : Node {
+    ListLiteralNode() : Node(NodeType::ListLiteral) {}
+    std::vector<Node*> elements;
 };
