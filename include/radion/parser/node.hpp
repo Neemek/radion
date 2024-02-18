@@ -32,4 +32,7 @@ struct Node {
         type = t;
     }
     NodeType type;
+
+    uint32_t start;
+    uint32_t stop;
 };
