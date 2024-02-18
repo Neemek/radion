@@ -1,17 +1,13 @@
 #include <any>
 #include <string>
+#include "radion/parser/node.hpp"
 
 class RuntimeException {
 public:
-    RuntimeException(std::string message);
+    RuntimeException(std::string message, Node *error_causer);
     //virtual ~RuntimeException();
-    void print();
+    void print(std::string src);
 private:
     std::string message;
-};
-
-class Returning {
-public:
-    Returning(std::any value);
-    std::any value;
+    Node *error_causer;
 };

@@ -2,16 +2,14 @@
 #include <iostream>
 
 #include "radion/interpreter/exceptions.hpp"
+#include "radion/parser/parser.hpp"
 
-RuntimeException::RuntimeException(std::string message) {
+RuntimeException::RuntimeException(std::string message, Node *error_causer) {
     this->message = message;
+    this->error_causer = error_causer;
 }
 
-void RuntimeException::print() {
+void RuntimeException::print(std::string src) {
     std::cout << "\u001b[31m" << "RuntimeError: " << message << "\u001b[37m" << std::endl;
-}
-
-
-Returning::Returning(std::any value) {
-    this->value = value;
+    std::cout << get_position_descriptor(src, this->error_causer->start) << " " << "" << std::endl;
 }
