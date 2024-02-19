@@ -115,7 +115,10 @@ Value* Interpreter::evaluate(Node *programNode)
     case NodeType::Reference:
     {
         auto *reference = (ReferenceNode *)programNode;
-        return this->symbols->get(reference->name);
+        Value* value = this->symbols->get(reference->name);
+
+        if (value == nullptr) this->exit("no variable of name \""+reference->name+"\"");
+        return value;
     }
     case NodeType::Define:
     {
