@@ -9,22 +9,34 @@ enum NodeType {
     NilLiteral,
     ListLiteral,
 
-    // Other
+    // Loops
+    Loop,
+    For,
+
+    // Variables
     Reference,
     Assign,
-    Loop,
-    Range,
-    For,
-    Block,
+    Change,
+
+    // Operation
+    Arithmetic,
+    Comparison,
+    Not,
+
+    // Conditional
     If,
-    Call,
+
+    // Function
     Define,
     InlineDef,
     Return,
-    Arithmetic,
-    Change,
-    Comparison,
-    Not,
+    Call,
+
+    // Helpers
+    Range,
+
+    // Other
+    Block,
 };
 
 struct Node {
