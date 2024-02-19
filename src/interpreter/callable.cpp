@@ -1,6 +1,5 @@
 #include "radion/interpreter/callable.hpp"
 #include <algorithm>
-#include <iterator>
 #include <utility>
 
 std::string Callable::to_string() {

@@ -1,7 +1,6 @@
 #include "radion/interpreter/stlib/stlib.hpp"
 
 #include <iostream>
-#include <functional>
 #include <utility>
 #include <vector>
 #include <chrono>
