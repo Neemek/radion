@@ -23,7 +23,7 @@ public:
     SymbolTable* symbols;
 private:
     void exit(std::string exit_message);
-    void exit(RuntimeException* exception);
+    static void exit(RuntimeException exception);
 
     Value* returned = nullptr;
     Node *current_node = nullptr;

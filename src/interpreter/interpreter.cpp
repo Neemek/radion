@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <functional>
+#include <utility>
 #include "radion/interpreter/callable.hpp"
 #include "radion/interpreter/interpreter.hpp"
 
@@ -29,10 +30,10 @@ Interpreter::Interpreter()
 }
 
 void Interpreter::exit(std::string exit_message) {
-    this->exit(new RuntimeException(exit_message, this->current_node));
+    Interpreter::exit(RuntimeException(std::move(exit_message), this->current_node));
 }
 
-void Interpreter::exit(RuntimeException* exception) {
+void Interpreter::exit(RuntimeException exception) {
     throw exception;
 }
 
@@ -347,13 +348,13 @@ bool cmp_any_int(Value* a, Value* b, std::function<bool(int, int)> comparison) {
     if (a->get_type() == ValueType::Int)
         ia = a->as<IntValue>()->number;
     else
-        throw new RuntimeException(a->get_typename()+" is not comparable as an int");
+        throw RuntimeException(a->get_typename()+" is not comparable as an int");
 
     int ib;
     if (b->get_type() == ValueType::Int)
         ib = b->as<IntValue>()->number;
     else
-        throw new RuntimeException(b->get_typename()+" is not comparable as an int");
+        throw RuntimeException(b->get_typename()+" is not comparable as an int");
 
     return comparison(ia, ib);
 }

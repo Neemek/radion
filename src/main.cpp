@@ -79,8 +79,8 @@ int main (int argc, char *argv[]) {
 		Interpreter interpreter;
 		try {
 			interpreter.evaluate(program);
-		} catch (RuntimeException* e) { // catch error messages
-			e->print(src);
+		} catch (RuntimeException &e) { // catch error messages
+			e.print(src);
 			return 1;
 		}
 	}
