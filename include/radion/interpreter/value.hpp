@@ -15,6 +15,7 @@ class Value {
 public:
     explicit Value(ValueType type);
     virtual std::string to_string()=0;
+    virtual std::vector<Value*>::iterator iter();
     virtual bool equals(Value *other)=0;
 
     ValueType get_type();

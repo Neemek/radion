@@ -23,6 +23,10 @@ Value* Value::expect_type(ValueType type) {
     return this;
 }
 
+std::vector<Value *>::iterator Value::iter() {
+    throw RuntimeException("Value is not iterable");
+}
+
 bool Value::has_type(ValueType type) {
     return this->get_type() == type;
 }
