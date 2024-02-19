@@ -28,9 +28,9 @@ Value* DefinedCallable::call(Interpreter* interpreter, std::vector<Value*> argum
     }
     
 
-    interpreter->nofree = true;
+    interpreter->nofree++;
     Value* ret = interpreter->evaluate(this->logic);
-    interpreter->nofree = false;
+    interpreter->nofree--;
 
     interpreter->table_ascend();
     return ret;

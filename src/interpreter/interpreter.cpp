@@ -183,13 +183,13 @@ Value* Interpreter::evaluate(Node *programNode)
     {
         auto *loop = (LoopNode *)programNode;
 
-        this->nofree = true;
+        this->nofree++;
         while (this->evaluate_boolean(loop->condition))
         {
             this->evaluate(loop->logic);
             if (loop->doo != nullptr) this->evaluate(loop->doo);
         }
-        this->nofree = false;
+        this->nofree--;
     }
     break;
 
@@ -227,12 +227,12 @@ Value* Interpreter::evaluate(Node *programNode)
         if (things->get_type() == ValueType::List) {
             auto values = things->as<ListValue>();
 
-            this->nofree = true;
+            this->nofree++;
             for (Value* value : values->elements) {
                 this->symbols->put(forloop->counter, value);
                 this->evaluate(forloop->logic);
             }
-            this->nofree = false;
+            this->nofree--;
         } else {
             this->exit("Cannot iterate over value: " + things->to_string());
         }

@@ -19,7 +19,7 @@ public:
     void table_descend();
     void table_ascend();
 
-    bool nofree = false;
+    int nofree = 0;
     SymbolTable* symbols;
 private:
     void exit(std::string exit_message);
