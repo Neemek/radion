@@ -10,12 +10,16 @@ RuntimeException::RuntimeException(std::string message) {
 }
 
 RuntimeException::RuntimeException(std::string message, Node *error_causer) {
-    this->message = message;
+    this->message = std::move(message);
     this->error_causer = error_causer;
 }
 
+const char *RuntimeException::what() const noexcept {
+    return this->message.c_str();
+}
+
 void RuntimeException::print(std::string src) {
-    std::cout << "\u001b[31m" << "RuntimeError: " << message << "\u001b[0m" << std::endl;
+    std::cout << "\u001b[31m" << "RuntimeError: " << this->what() << "\u001b[0m" << std::endl;
 
     if (this->error_causer == nullptr) return;
 
