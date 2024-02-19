@@ -18,7 +18,7 @@ public:
 
 class DefinedCallable : public Callable {
 public:
-    DefinedCallable(DefinedCallable* callable);
+    explicit DefinedCallable(DefinedCallable* callable);
     DefinedCallable(std::string name, std::vector<std::string> arguments, Node* logic);
     Value* call(Interpreter* interpreter, std::vector<Value*> arguments) override;
 

@@ -9,7 +9,7 @@
 class ListValue : public Value {
 public:
     ListValue() : Value(ValueType::List) {};
-    ListValue(std::vector<Value*> elements);
+    explicit ListValue(std::vector<Value*> elements);
 
     std::vector<Value*> elements;
 

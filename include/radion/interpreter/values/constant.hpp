@@ -7,7 +7,7 @@
 
 class BooleanValue : public Value {
 public:
-    BooleanValue(bool initial);
+    explicit BooleanValue(bool initial);
     std::string to_string() override;
 
     bool boolean;

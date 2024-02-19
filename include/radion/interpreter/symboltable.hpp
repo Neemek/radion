@@ -7,7 +7,7 @@
 class SymbolTable {
 public:
     SymbolTable();
-    SymbolTable(SymbolTable* super);
+    explicit SymbolTable(SymbolTable* super);
 
     Value* get(std::string name);
     void put(std::string name, Value* value);

@@ -28,7 +28,7 @@ enum NodeType {
 };
 
 struct Node {
-    Node(NodeType t) {
+    explicit Node(NodeType t) {
         type = t;
     }
     NodeType type;

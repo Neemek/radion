@@ -6,7 +6,7 @@
 
 struct CallNode : Node {
     CallNode() : Node(NodeType::Call) {}
-    CallNode(NodeType t) : Node(t) {}
+    explicit CallNode(NodeType t) : Node(t) {}
     
     std::string name;
     std::vector<Node*> params;
@@ -14,7 +14,7 @@ struct CallNode : Node {
 
 struct DefineNode : CallNode {
     DefineNode() : CallNode(NodeType::Define) {}
-    DefineNode(NodeType t) : CallNode(t) {}
+    explicit DefineNode(NodeType t) : CallNode(t) {}
     Node* logic;
     std::vector<std::string> params;
 };

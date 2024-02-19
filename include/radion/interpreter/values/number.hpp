@@ -7,7 +7,7 @@
 
 class IntValue : public Value {
 public:
-    IntValue(int initial);
+    explicit IntValue(int initial);
 
     int number;
 
@@ -17,7 +17,7 @@ public:
 
 class FloatValue : public Value {
 public:
-    FloatValue(float initial);
+    explicit FloatValue(float initial);
 
     float number;
 
