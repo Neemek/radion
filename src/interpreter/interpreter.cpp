@@ -146,9 +146,7 @@ Value* Interpreter::evaluate(Node *programNode)
         auto *change = (ChangeNode *)programNode;
 
         Value* val = this->symbols->get(change->name);
-        IntValue* value;
-        if (val->get_type() == ValueType::Int) value = (IntValue *)val;
-        else this->exit("variable " + change->name + ", value " + value->get_typename() + " is not an integer");
+        auto* value = val->expect_type(ValueType::Int)->as<IntValue>();
 
         value->number += change->changeBy;
 
