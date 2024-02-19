@@ -385,7 +385,7 @@ void printAST(Node* root) {
         break;
     case NodeType::Loop:
     {
-        LoopNode *loop = (LoopNode*) root;
+        auto *loop = (LoopNode*) root;
         std::cout << "-- loop --" << std::endl;
         std::cout << "condition: ";
         printAST(loop->condition);
