@@ -20,6 +20,9 @@ private:
     Token* curr;
     vector<Token> tokens;
 
+    int start = 0;
+    int end = 0;
+
     void nextToken();
     void error(Token* token, const char* message);
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <functional>
+#include <utility>
 #include "radion/interpreter/callable.hpp"
 #include "radion/interpreter/interpreter.hpp"
 
@@ -29,10 +30,10 @@ Interpreter::Interpreter()
 }
 
 void Interpreter::exit(std::string exit_message) {
-    this->exit(new RuntimeException(exit_message));
+    Interpreter::exit(RuntimeException(std::move(exit_message), this->current_node));
 }
 
-void Interpreter::exit(RuntimeException* exception) {
+void Interpreter::exit(RuntimeException exception) {
     throw exception;
 }
 
@@ -40,6 +41,8 @@ Value* Interpreter::evaluate(Node *programNode)
 {
     if (programNode == nullptr)
         this->exit("Node is a null-pointer");
+
+    this->current_node = programNode;
 
     switch (programNode->type)
     {
@@ -181,13 +184,13 @@ Value* Interpreter::evaluate(Node *programNode)
     {
         auto *loop = (LoopNode *)programNode;
 
-        this->nofree = true;
+        this->nofree++;
         while (this->evaluate_boolean(loop->condition))
         {
             this->evaluate(loop->logic);
             if (loop->doo != nullptr) this->evaluate(loop->doo);
         }
-        this->nofree = false;
+        this->nofree--;
     }
     break;
 
@@ -225,12 +228,12 @@ Value* Interpreter::evaluate(Node *programNode)
         if (things->get_type() == ValueType::List) {
             auto values = things->as<ListValue>();
 
-            this->nofree = true;
+            this->nofree++;
             for (Value* value : values->elements) {
                 this->symbols->put(forloop->counter, value);
                 this->evaluate(forloop->logic);
             }
-            this->nofree = false;
+            this->nofree--;
         } else {
             this->exit("Cannot iterate over value: " + things->to_string());
         }
@@ -345,13 +348,13 @@ bool cmp_any_int(Value* a, Value* b, std::function<bool(int, int)> comparison) {
     if (a->get_type() == ValueType::Int)
         ia = a->as<IntValue>()->number;
     else
-        throw new RuntimeException(a->get_typename()+" is not comparable as an int");
+        throw RuntimeException(a->get_typename()+" is not comparable as an int");
 
     int ib;
     if (b->get_type() == ValueType::Int)
         ib = b->as<IntValue>()->number;
     else
-        throw new RuntimeException(b->get_typename()+" is not comparable as an int");
+        throw RuntimeException(b->get_typename()+" is not comparable as an int");
 
     return comparison(ia, ib);
 }

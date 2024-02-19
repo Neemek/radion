@@ -32,4 +32,7 @@ struct Node {
         type = t;
     }
     NodeType type;
+
+    int start;
+    int end;
 };

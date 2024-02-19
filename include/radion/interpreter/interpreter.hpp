@@ -19,13 +19,14 @@ public:
     void table_descend();
     void table_ascend();
 
-    bool nofree = false;
+    int nofree = 0;
     SymbolTable* symbols;
 private:
     void exit(std::string exit_message);
-    void exit(RuntimeException* exception);
+    static void exit(RuntimeException exception);
 
-    Value* returned;
+    Value* returned = nullptr;
+    Node *current_node = nullptr;
 };
 
 bool any_equals(Value* a, Value* b);

@@ -19,8 +19,12 @@ std::string Value::get_typename() {
 
 Value* Value::expect_type(ValueType type) {
     if (!this->has_type(type))
-        throw new RuntimeException("expected type "+value_type_name(type)+", was "+ value_type_name(this->_type));
+        throw RuntimeException("expected type "+value_type_name(type)+", was "+ value_type_name(this->_type));
     return this;
+}
+
+std::vector<Value *>::iterator Value::iter() {
+    throw RuntimeException("Value is not iterable");
 }
 
 bool Value::has_type(ValueType type) {
