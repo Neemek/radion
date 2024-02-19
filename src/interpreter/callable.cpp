@@ -14,7 +14,7 @@ DefinedCallable::DefinedCallable(DefinedCallable* callable) : Callable() {
 }
 
 DefinedCallable::DefinedCallable(std::string name, std::vector<std::string> arguments, Node* logic) : Callable() {
-    this->name = name;
+    this->name = std::move(name);
     this->arguments = std::move(arguments);
     this->logic = logic;
 }
@@ -41,7 +41,7 @@ bool DefinedCallable::equals(Value *other) {
 
 
 NativeCallable::NativeCallable(std::string name, std::function<Value*(std::vector<Value*> arguments)> function) : Callable() {
-    this->name = name;
+    this->name = std::move(name);
     this->logic = std::move(function);
 }
 

@@ -177,7 +177,7 @@ vector<Token> Lexer::lex(std::string src)
     return tokens;
 }
 
-void print_tokens(std::string src, vector<Token> tokens) {
+void print_tokens(const std::string& src, const vector<Token>& tokens) {
     for (Token token : tokens) {
         std::cout << get_position_descriptor(src, token.pos()) << "\t " << ttype_to_string(token.type()) << " => " << token.lexeme() << std::endl;
     }

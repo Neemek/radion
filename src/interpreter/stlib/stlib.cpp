@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <functional>
+#include <utility>
 #include <vector>
 #include <chrono>
 
@@ -24,12 +25,12 @@ void registerStandardLibrary(SymbolTable* top) {
     // Native functions
     top->put("print", new NativeCallable("print", [](std::vector<Value*> arguments)
                                                               {
-        print(arguments);
+        print(std::move(arguments));
 
         return NIL_VALUE; }));
     top->put("println", new NativeCallable("println", [](std::vector<Value*> arguments)
                                                                {
-        print(arguments);
+        print(std::move(arguments));
         std::cout << std::endl;
 
         return NIL_VALUE; }));
@@ -46,7 +47,7 @@ void registerStandardLibrary(SymbolTable* top) {
         return new IntValue((int)t);
     }));
 
-    top->put("zip", new NativeCallable("zip", [](std::vector<Value*> args) {
+    top->put("zip", new NativeCallable("zip", [](const std::vector<Value*>& args) {
         auto *zipped = new ListValue;
 
         int max_size = 0;

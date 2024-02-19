@@ -30,7 +30,7 @@ private:
 };
 
 bool any_equals(Value* a, Value* b);
-bool cmp_any_int(Value* a, Value* b, std::function<bool(int, int)> comparison);
+bool cmp_any_int(Value* a, Value* b, const std::function<bool(int, int)>& comparison);
 
 
 void printAST(Node* root);

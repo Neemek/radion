@@ -2,13 +2,14 @@
 #include "radion/tokens.hpp"
 
 #include <string>
+#include <utility>
 
 using namespace std;
 
 Token::Token(TokenType type, string lexeme, int pos)
 {
 	_type = type;
-	_lexeme = lexeme;
+	_lexeme = std::move(lexeme);
 	_pos = pos;
 }
 

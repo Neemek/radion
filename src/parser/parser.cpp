@@ -13,16 +13,17 @@
 
 
 #include <iostream>
+#include <utility>
 
 Parser::Parser() {}
 
 Parser::Parser(vector<Token> tokens, string src) {
-    this->reset(tokens, src);
+    this->reset(std::move(tokens), std::move(src));
 }
 
 void Parser::reset(vector<Token> tokens, string src) {
-    this->tokens = tokens;
-    this->src = src;
+    this->tokens = std::move(tokens);
+    this->src = std::move(src);
     this->pos = -1;
 
     this->nextToken();

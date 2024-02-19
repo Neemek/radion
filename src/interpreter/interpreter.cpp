@@ -343,7 +343,7 @@ void Interpreter::table_ascend() {
     this->symbols = super;
 }
 
-bool cmp_any_int(Value* a, Value* b, std::function<bool(int, int)> comparison) {
+bool cmp_any_int(Value* a, Value* b, const std::function<bool(int, int)>& comparison) {
     int ia;
     if (a->get_type() == ValueType::Int)
         ia = a->as<IntValue>()->number;
