@@ -29,20 +29,12 @@ int main (int argc, char *argv[]) {
 
 			if (p.hadError) continue;
 
-			std::any value = interpreter.evaluate(program);
+			Value *value = interpreter.evaluate(program);
 			string out;
 
-			std::cout << value.type().name() << std::endl;
-			if (value.type() == typeid(int)) {
-				out = std::any_cast<int>(value);
-			} else if (value.type() == typeid(string)) {
-				out = std::any_cast<string>(value);
-			}
-
-			std::cout << out << std::endl;
+			std::cout << value->to_string() << std::endl;
 		}
-	} else 
-	{
+	} else {
 		// Run file
 		ifstream t(args->entryPath);
 		std::stringstream buffer;
