@@ -7,20 +7,22 @@
 
 class IntValue : public Value {
 public:
-    IntValue(int initial);
+    explicit IntValue(int initial);
 
     int number;
 
     std::string to_string() override;
     bool equals(Value *other) override;
+    Value * copy() override;
 };
 
 class FloatValue : public Value {
 public:
-    FloatValue(float initial);
+    explicit FloatValue(float initial);
 
     float number;
 
     std::string to_string() override;
     bool equals(Value *other) override;
+    Value * copy() override;
 };

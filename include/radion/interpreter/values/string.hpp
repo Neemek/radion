@@ -3,8 +3,9 @@
 
 class StringValue : public Value {
 public:
-    StringValue(std::string initial);
+    explicit StringValue(std::string initial);
     std::string to_string() override;
+    Value * copy() override;
     bool equals(Value* other) override;
 
     std::string content;

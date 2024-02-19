@@ -1,11 +1,11 @@
-#include <any>
 #include <iostream>
+#include <utility>
 
 #include "radion/interpreter/exceptions.hpp"
 #include "radion/parser/parser.hpp"
 
 RuntimeException::RuntimeException(std::string message) {
-    this->message = message;
+    this->message = std::move(message);
     this->error_causer = nullptr;
 }
 

@@ -3,8 +3,8 @@
 
 struct IfNode : Node {
     IfNode() : Node(NodeType::If) {}
-    Node* condition;
-    Node* logic;
+    Node* condition{};
+    Node* logic{};
 
-    Node* otherwise;
+    Node* otherwise{};
 };

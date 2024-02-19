@@ -10,5 +10,5 @@ struct ReferenceNode : Node {
 struct AssignNode : Node {
     AssignNode() : Node(NodeType::Assign) {}
     std::string name;
-    Node* value;
+    Node* value{};
 };

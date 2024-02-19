@@ -1,7 +1,5 @@
 #include "radion/interpreter/callable.hpp"
-#include <any>
 #include <algorithm>
-#include <iterator>
 #include <utility>
 
 std::string Callable::to_string() {
@@ -15,7 +13,7 @@ DefinedCallable::DefinedCallable(DefinedCallable* callable) : Callable() {
 }
 
 DefinedCallable::DefinedCallable(std::string name, std::vector<std::string> arguments, Node* logic) : Callable() {
-    this->name = name;
+    this->name = std::move(name);
     this->arguments = std::move(arguments);
     this->logic = logic;
 }
@@ -40,9 +38,13 @@ bool DefinedCallable::equals(Value *other) {
     return other->has_type(ValueType::Func) && this->name == other->as<Callable>()->name;
 }
 
+Value *DefinedCallable::copy() {
+    return new DefinedCallable(this);
+}
+
 
 NativeCallable::NativeCallable(std::string name, std::function<Value*(std::vector<Value*> arguments)> function) : Callable() {
-    this->name = name;
+    this->name = std::move(name);
     this->logic = std::move(function);
 }
 
@@ -52,4 +54,8 @@ Value* NativeCallable::call(Interpreter* interpreter, std::vector<Value*> argume
 
 bool NativeCallable::equals(Value *other) {
     return other->has_type(ValueType::Func) && this->name == other->as<Callable>()->name;
+}
+
+Value *NativeCallable::copy() {
+    return new NativeCallable(this->name, this->logic);
 }

@@ -4,25 +4,25 @@
 
 struct LoopNode : Node {
     LoopNode() : Node(NodeType::Loop) {}
-    Node* condition;
+    Node* condition{};
     
-    Node* doo;
-    Node* logic;
+    Node* doo{};
+    Node* logic{};
 };
 
 struct RangeNode : Node {
     RangeNode() : Node(NodeType::Range) {}
 
-    Node* from;
-    Node* to;
-    Node* increase;
+    Node* from{};
+    Node* to{};
+    Node* increase{};
 };
 
 struct ForNode : Node {
     ForNode() : Node(NodeType::For) {}
     
     std::string counter;
-    Node* values;
+    Node* values{};
 
-    Node* logic;
+    Node* logic{};
 };

@@ -10,7 +10,6 @@
 int main (int argc, char *argv[]) {
 	Arguments* args = parseArgs(argc, argv);
 
-#ifdef NDEBUG
 	if (args->entryPath == nullptr) {
 		// Help or REPL
 		//vector<Token> tokens = Lexer::lex(src);
@@ -30,27 +29,14 @@ int main (int argc, char *argv[]) {
 
 			if (p.hadError) continue;
 
-			std::any value = interpreter.evaluate(program);
+			Value *value = interpreter.evaluate(program);
 			string out;
 
-			std::cout << value.type().name() << std::endl;
-			if (value.type() == typeid(int)) {
-				out = std::any_cast<int>(value);
-			} else if (value.type() == typeid(string)) {
-				out = std::any_cast<string>(value);
-			}
-
-			std::cout << out << std::endl;
+			std::cout << value->to_string() << std::endl;
 		}
-	} else 
-#endif
-	{
+	} else {
 		// Run file
-#ifndef NDEBUG
-		ifstream t("/Users/neemek/Code/radion/examples/helloworld.rn");
-#else
 		ifstream t(args->entryPath);
-#endif
 		std::stringstream buffer;
 		buffer << t.rdbuf();
 

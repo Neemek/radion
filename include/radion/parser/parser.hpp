@@ -16,8 +16,8 @@ public:
 private:
     int pos = -1;
     std::string src;
-    Token* prev;
-    Token* curr;
+    Token* prev{};
+    Token* curr{};
     vector<Token> tokens;
 
     int start = 0;

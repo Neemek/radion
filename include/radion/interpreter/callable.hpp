@@ -18,11 +18,12 @@ public:
 
 class DefinedCallable : public Callable {
 public:
-    DefinedCallable(DefinedCallable* callable);
+    explicit DefinedCallable(DefinedCallable* callable);
     DefinedCallable(std::string name, std::vector<std::string> arguments, Node* logic);
     Value* call(Interpreter* interpreter, std::vector<Value*> arguments) override;
 
     bool equals(Value *other) override;
+    Value * copy() override;
 private:
     Node* logic;
     std::vector<std::string> arguments;
@@ -34,6 +35,7 @@ public:
     Value* call(Interpreter* interpreter, std::vector<Value*> arguments) override;
 
     bool equals(Value *other) override;
+    Value * copy() override;
 private:
     std::function<Value*(std::vector<Value*> arguments)> logic;
 };
