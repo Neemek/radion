@@ -72,7 +72,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::Block:
     {
-        BlockNode *block = (BlockNode *)programNode;
+        auto *block = (BlockNode *)programNode;
         this->table_descend();
         for (int i = 0; i < block->statements.size(); i++)
         {
@@ -95,7 +95,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::Assign:
     {
-        AssignNode *assign = (AssignNode *)programNode;
+        auto *assign = (AssignNode *)programNode;
         Value* value = this->evaluate(assign->value);
 
         this->symbols->put(assign->name, value);
@@ -104,7 +104,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::If:
     {
-        IfNode *conditional = (IfNode *)programNode;
+        auto *conditional = (IfNode *)programNode;
         if (this->evaluate_boolean(conditional->condition))
             this->evaluate(conditional->logic);
         else if (conditional->otherwise != nullptr)
@@ -114,24 +114,24 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::Reference:
     {
-        ReferenceNode *reference = (ReferenceNode *)programNode;
+        auto *reference = (ReferenceNode *)programNode;
         return this->symbols->get(reference->name);
     }
     case NodeType::Define:
     {
-        DefineNode *definition = (DefineNode *)programNode;
+        auto *definition = (DefineNode *)programNode;
         this->symbols->put(definition->name, new DefinedCallable(definition->name, definition->params, definition->logic));
     }
     break;
     case NodeType::InlineDef:
     {
-        InlineDefNode *definition = (InlineDefNode *)programNode;
+        auto *definition = (InlineDefNode *)programNode;
         return new DefinedCallable(definition->name.c_str(), definition->params, definition->logic);
     }
 
     case NodeType::Return:
     {
-        ReturnNode* returning = (ReturnNode *)programNode;
+        auto* returning = (ReturnNode *)programNode;
         this->returned = this->evaluate(returning->value);
     }
     break;
@@ -143,7 +143,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::Change:
     {
-        ChangeNode *change = (ChangeNode *)programNode;
+        auto *change = (ChangeNode *)programNode;
 
         Value* val = this->symbols->get(change->name);
         IntValue* value;
@@ -157,7 +157,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::Call:
     {
-        CallNode *call = (CallNode *)programNode;
+        auto *call = (CallNode *)programNode;
         Value *func = this->symbols->get(call->name);
 
         if (func == nullptr) {
@@ -197,7 +197,7 @@ Value* Interpreter::evaluate(Node *programNode)
     case NodeType::Range:
     {
         // Create range
-        RangeNode *range = (RangeNode *)programNode;
+        auto *range = (RangeNode *)programNode;
         std::vector<Value*> r;
 
         auto *fromv = this->evaluate(range->from)->expect_type(ValueType::Int)->as<IntValue>();
@@ -222,7 +222,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
     case NodeType::For:
     {
-        ForNode *forloop = (ForNode *)programNode;
+        auto *forloop = (ForNode *)programNode;
 
         Value* things = this->evaluate(forloop->values);
         if (things->get_type() == ValueType::List) {
@@ -294,7 +294,7 @@ bool Interpreter::evaluate_boolean(Node* expression) {
     {
     case NodeType::Comparison:
     {
-        ComparisonNode* comparison = (ComparisonNode*)expression;
+        auto* comparison = (ComparisonNode*)expression;
         Value *a = this->evaluate(comparison->left);
         Value *b = this->evaluate(comparison->right);
 

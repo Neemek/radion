@@ -3,7 +3,7 @@
 #include <cstring>
 
 Arguments* parseArgs(int argc, char* argv[]) {
-    Arguments* args = new Arguments;
+    auto* args = new Arguments;
 
     for (int i = 1; i < argc; i++)
     {

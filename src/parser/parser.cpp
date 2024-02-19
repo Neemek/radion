@@ -29,7 +29,7 @@ void Parser::reset(vector<Token> tokens, string src) {
 }
 
 BlockNode* Parser::parse() {
-    BlockNode* n = new BlockNode();
+    auto* n = new BlockNode();
 
     n->start = this->start;
     while (this->curr->type() != TokenType::END)
@@ -91,7 +91,7 @@ void Parser::expect(TokenType type, const char* error) {
 Node* Parser::factor() {
     int start = this->start;
     if (this->accept(TokenType::NOT)) {
-        NotNode* n = new NotNode;
+        auto* n = new NotNode;
         n->start = start;
 
         n->value = this->factor();
@@ -99,7 +99,7 @@ Node* Parser::factor() {
 
         return n;
     } else if (this->accept(TokenType::STRING)) {
-        StringLiteralNode* n = new StringLiteralNode;
+        auto* n = new StringLiteralNode;
         n->start = start;
 
         n->string = this->prev->lexeme().substr(1, this->prev->lexeme().length()-2);
@@ -107,7 +107,7 @@ Node* Parser::factor() {
 
         return n;
     } else if (this->accept(TokenType::NUMBER)) {
-        IntLiteralNode* n = new IntLiteralNode;
+        auto* n = new IntLiteralNode;
         n->start = start;
 
         n->number = stoi(this->prev->lexeme());
@@ -115,7 +115,7 @@ Node* Parser::factor() {
 
         return n;
     } else if (this->accept(TokenType::TRUE) || this->accept(TokenType::FALSE)) {
-        BooleanLiteralNode* n = new BooleanLiteralNode;
+        auto* n = new BooleanLiteralNode;
         n->start = start;
 
         n->boolean = this->prev->type() == TokenType::TRUE;
@@ -147,7 +147,7 @@ Node* Parser::factor() {
         std::string name = this->prev->lexeme();
         // Differentiate between reference and function call
         if (this->accept(TokenType::OPEN_PAREN)) {
-            CallNode* n = new CallNode;
+            auto* n = new CallNode;
             n->name = name;
             n->start = start;
 
@@ -165,7 +165,7 @@ Node* Parser::factor() {
             return n;
             
         } else if (this->accept(TokenType::ASSIGN)) {
-            AssignNode* n = new AssignNode;
+            auto* n = new AssignNode;
             n->name = name;
             n->start = start;
 
@@ -174,7 +174,7 @@ Node* Parser::factor() {
 
             return n;
         } else if (this->accept(TokenType::DOUBLE_PLUS) || this->accept(TokenType::DOUBLE_MINUS)) {
-            ChangeNode* n = new ChangeNode;
+            auto* n = new ChangeNode;
             n->changeBy = this->prev->type() == TokenType::DOUBLE_PLUS ? 1 : -1;
             n->start = start;
 
@@ -184,7 +184,7 @@ Node* Parser::factor() {
 
             return n;
         } else {
-            ReferenceNode* n = new ReferenceNode;
+            auto* n = new ReferenceNode;
             n->start = start;
             n->name = name;
 
@@ -192,7 +192,7 @@ Node* Parser::factor() {
             return n;
         }
     } else if (this->accept(TokenType::DOUBLE_PLUS) || this->accept(TokenType::DOUBLE_MINUS)) {
-        ChangeNode* n = new ChangeNode;
+        auto* n = new ChangeNode;
         n->changeBy = this->prev->type() == TokenType::DOUBLE_PLUS ? 1 : -1;
         n->start = start;
 
@@ -210,7 +210,7 @@ Node* Parser::factor() {
         return n;
     } else if (this->accept(TokenType::FUNC)) {
         // lambda basically
-        InlineDefNode* n = new InlineDefNode;
+        auto* n = new InlineDefNode;
         n->start = start;
 
         std::string name = "*";
@@ -242,7 +242,7 @@ Node* Parser::range() {
     Node* f = this->factor();
 
     if (this->accept(TokenType::DOUBLE_DOT)) {
-        RangeNode* n = new RangeNode;
+        auto* n = new RangeNode;
         n->start = start;
 
         // Get operation
@@ -264,7 +264,7 @@ Node* Parser::term() {
     Node* f = this->range();
 
     if (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH)) {
-        ArithmeticNode* n = new ArithmeticNode;
+        auto* n = new ArithmeticNode;
         n->start = start;
 
         // Get operation
@@ -286,7 +286,7 @@ Node* Parser::product() {
     Node* t = this->term();
 
     if (this->accept(TokenType::PLUS) || this->accept(TokenType::MINUS)) {
-        ArithmeticNode* n = new ArithmeticNode;
+        auto* n = new ArithmeticNode;
         n->start = start;
 
         // Get operation
@@ -307,7 +307,7 @@ Node* Parser::expression() {
     int start = this->start;
     Node* t = this->product();
 
-    ComparisonNode* n = new ComparisonNode;
+    auto* n = new ComparisonNode;
 
     if (this->accept(TokenType::EQUAL)) n->comparison = ComparisonType::Equals;
     else if (this->accept(TokenType::NOT_EQUAL)) n->comparison = ComparisonType::NotEquals;
@@ -331,7 +331,7 @@ Node* Parser::expression() {
 Node* Parser::statement() {
     int start = this->start;
     if (this->accept(TokenType::IF)) {
-        IfNode* n = new IfNode;
+        auto* n = new IfNode;
         n->start = start;
 
         n->condition = this->expression();
@@ -341,7 +341,7 @@ Node* Parser::statement() {
         n->end = this->end;
         return n;
     } else if (this->accept(TokenType::WHILE)) {
-        LoopNode* n = new LoopNode;
+        auto* n = new LoopNode;
         n->start = start;
 
         // Optional parenthasis :D
@@ -356,7 +356,7 @@ Node* Parser::statement() {
         n->end = this->end;
         return n;
     } else if (this->accept(TokenType::FOR)) {
-        ForNode* n = new ForNode;
+        auto* n = new ForNode;
         n->start = start;
 
         this->expect(TokenType::NAME, "required for-loop variable name");
@@ -371,7 +371,7 @@ Node* Parser::statement() {
         n->end = this->end;
         return n;
     } else if (this->accept(TokenType::FUNC)) {
-        DefineNode* n = new DefineNode;
+        auto* n = new DefineNode;
         n->start = start;
         this->expect(TokenType::NAME, "Invalid function name");
 
@@ -407,7 +407,7 @@ Node* Parser::statement() {
 Node* Parser::block() {
     int start = this->start;
     if (this->accept(TokenType::OPEN_CURLY)) {
-        BlockNode* n = new BlockNode;
+        auto* n = new BlockNode;
         n->start = start;
 
         while (this->curr->type() != TokenType::CLOSE_CURLY)
