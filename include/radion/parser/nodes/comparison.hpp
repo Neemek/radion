@@ -13,14 +13,14 @@ enum ComparisonType {
 
 struct ComparisonNode : Node {
     ComparisonNode() : Node(NodeType::Comparison) {}
-    Node* left;
-    Node* right;
+    Node* left{};
+    Node* right{};
 
     ComparisonType comparison;
 };
 
 struct NotNode : Node {
     NotNode() : Node(NodeType::Not) {}
-    Node* value;
+    Node* value{};
 };
 

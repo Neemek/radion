@@ -15,13 +15,13 @@ struct CallNode : Node {
 struct DefineNode : CallNode {
     DefineNode() : CallNode(NodeType::Define) {}
     explicit DefineNode(NodeType t) : CallNode(t) {}
-    Node* logic;
+    Node* logic{};
     std::vector<std::string> params;
 };
 
 struct ReturnNode : Node {
     ReturnNode() : Node(NodeType::Return) {}
-    Node* value;
+    Node* value{};
 };
 
 struct InlineDefNode : DefineNode {

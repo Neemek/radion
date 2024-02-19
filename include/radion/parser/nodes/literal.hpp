@@ -5,7 +5,7 @@
 
 struct IntLiteralNode : Node {
     IntLiteralNode() : Node(NodeType::IntLiteral) {}
-    int number;
+    int number{};
 };
 
 struct StringLiteralNode : Node {
@@ -15,7 +15,7 @@ struct StringLiteralNode : Node {
 
 struct BooleanLiteralNode : Node {
     BooleanLiteralNode() : Node(NodeType::BooleanLiteral) {}
-    bool boolean;
+    bool boolean{};
 };
 
 struct NilLiteralNode : Node {

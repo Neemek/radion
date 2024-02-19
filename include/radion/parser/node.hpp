@@ -33,6 +33,6 @@ struct Node {
     }
     NodeType type;
 
-    int start;
-    int end;
+    int start{};
+    int end{};
 };

@@ -1,7 +1,7 @@
 #include <map>
 
 struct Arguments {
-    char* entryPath;
+    char* entryPath{};
 
     bool printTokens = false;
     bool dontRun = false;
