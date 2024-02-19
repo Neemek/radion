@@ -29,7 +29,6 @@ private:
     Node *current_node = nullptr;
 };
 
-bool any_equals(Value* a, Value* b);
 bool cmp_any_int(Value* a, Value* b, const std::function<bool(int, int)>& comparison);
 
 
