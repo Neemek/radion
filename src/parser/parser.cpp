@@ -25,6 +25,7 @@ void Parser::reset(vector<Token> tokens, string src) {
     this->tokens = std::move(tokens);
     this->src = std::move(src);
     this->pos = -1;
+    this->hadError = false;
 
     this->nextToken();
 }

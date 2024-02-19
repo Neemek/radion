@@ -9,6 +9,7 @@ public:
     Parser();
     Parser(vector<Token> tokens, string src);
     BlockNode* parse();
+    Node* block();
     bool hadError = false;
 
     void reset(vector<Token> tokens, string src);
@@ -21,7 +22,7 @@ private:
     vector<Token> tokens;
 
     int start = 0;
-    int end = 0;
+    int prev_end = 0;
 
     void nextToken();
     void error(Token* token, const char* message);
@@ -35,7 +36,7 @@ private:
     Node* product();
     Node* expression();
     Node* statement();
-    Node* block();
+
 };
 
 std::string get_position_descriptor(std::string src, int pos);

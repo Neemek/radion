@@ -5,6 +5,8 @@
 #include "radion/lexer.hpp"
 #include "radion/parser/parser.hpp"
 #include "radion/interpreter/interpreter.hpp"
+#include "radion/interpreter/callable.hpp"
+#include "radion/interpreter/values/constant.hpp"
 #include "radion/parser/nodes/block.hpp"
 
 int main (int argc, char *argv[]) {
@@ -17,22 +19,34 @@ int main (int argc, char *argv[]) {
 		string src;
 		Parser p;
 		Interpreter interpreter;
+        Value *returned;
 
-		bool replRunning = true;
+        bool replRunning = true;
+        interpreter.symbols->put("exit", new NativeCallable("exit", [=](std::vector<Value*> args) mutable {
+            replRunning = false;
+            std::cout << "exiting" << std::endl;
+            return NIL_VALUE;
+        }));
+
 		while (replRunning) {
 			std::cout << "> ";
 			std::getline(cin, src);
 
 			vector<Token> tokens = Lexer::lex(src);
+            // if empty string is given
+            if (tokens.size() == 1) continue;
 			p.reset(tokens, src);
-			BlockNode* program = p.parse();
+			Node* program = p.block();
 
 			if (p.hadError) continue;
 
-			Value *value = interpreter.evaluate(program);
-			string out;
+            try {
+                returned = interpreter.evaluate(program);
 
-			std::cout << value->to_string() << std::endl;
+                std::cout << returned->to_string() << std::endl;
+            } catch (RuntimeException &e) {
+                e.print(src);
+            }
 		}
 	} else {
 		// Run file
