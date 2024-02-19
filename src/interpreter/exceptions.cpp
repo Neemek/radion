@@ -1,4 +1,3 @@
-#include <any>
 #include <iostream>
 
 #include "radion/interpreter/exceptions.hpp"

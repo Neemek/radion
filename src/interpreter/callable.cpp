@@ -1,5 +1,4 @@
 #include "radion/interpreter/callable.hpp"
-#include <any>
 #include <algorithm>
 #include <iterator>
 #include <utility>
