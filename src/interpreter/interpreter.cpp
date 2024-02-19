@@ -126,7 +126,7 @@ Value* Interpreter::evaluate(Node *programNode)
     case NodeType::InlineDef:
     {
         auto *definition = (InlineDefNode *)programNode;
-        return new DefinedCallable(definition->name.c_str(), definition->params, definition->logic);
+        return new DefinedCallable(definition->name, definition->params, definition->logic);
     }
 
     case NodeType::Return:
