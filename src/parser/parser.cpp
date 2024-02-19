@@ -15,7 +15,7 @@
 #include <iostream>
 #include <utility>
 
-Parser::Parser() {}
+Parser::Parser() = default;
 
 Parser::Parser(vector<Token> tokens, string src) {
     this->reset(std::move(tokens), std::move(src));
