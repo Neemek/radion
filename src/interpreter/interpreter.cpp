@@ -172,6 +172,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
         std::vector<Value*> calledArgs;
 
+        calledArgs.reserve(call->params.size());
         for (Node* node : call->params)
         {
             calledArgs.push_back(this->evaluate(node));
