@@ -13,6 +13,7 @@ public:
 
     std::string to_string() override;
     bool equals(Value *other) override;
+    Value * copy() override;
 };
 
 class FloatValue : public Value {
@@ -23,4 +24,5 @@ public:
 
     std::string to_string() override;
     bool equals(Value *other) override;
+    Value * copy() override;
 };

@@ -12,6 +12,7 @@ public:
 
     bool boolean;
     bool equals(Value *other) override;
+    Value * copy() override;
 };
 
 static BooleanValue* BOOLEAN_TRUE = new BooleanValue(true);
@@ -23,6 +24,7 @@ public:
 
     std::string to_string() override;
     bool equals(Value *other) override;
+    Value * copy() override;
 };
 
 static NilValue* NIL_VALUE = new NilValue;

@@ -35,3 +35,7 @@ bool ListValue::equals(Value *other) {
 
     return true;
 }
+
+Value *ListValue::copy() {
+    return new ListValue(this->elements);
+}

@@ -38,6 +38,10 @@ bool DefinedCallable::equals(Value *other) {
     return other->has_type(ValueType::Func) && this->name == other->as<Callable>()->name;
 }
 
+Value *DefinedCallable::copy() {
+    return new DefinedCallable(this);
+}
+
 
 NativeCallable::NativeCallable(std::string name, std::function<Value*(std::vector<Value*> arguments)> function) : Callable() {
     this->name = std::move(name);
@@ -50,4 +54,8 @@ Value* NativeCallable::call(Interpreter* interpreter, std::vector<Value*> argume
 
 bool NativeCallable::equals(Value *other) {
     return other->has_type(ValueType::Func) && this->name == other->as<Callable>()->name;
+}
+
+Value *NativeCallable::copy() {
+    return new NativeCallable(this->name, this->logic);
 }

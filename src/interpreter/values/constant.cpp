@@ -16,6 +16,10 @@ bool BooleanValue::equals(Value *other) {
     return other->has_type(ValueType::Boolean) && this->boolean == other->as<BooleanValue>()->boolean;
 }
 
+Value *BooleanValue::copy() {
+    return this->boolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+}
+
 std::string NilValue::to_string() {
     return "nil";
 }
@@ -24,3 +28,6 @@ bool NilValue::equals(Value *other) {
     return other->has_type(ValueType::Nil);
 }
 
+Value *NilValue::copy() {
+    return NIL_VALUE;
+}

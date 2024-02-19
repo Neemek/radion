@@ -15,3 +15,7 @@ StringValue::StringValue(std::string initial) : Value(ValueType::String) {
 bool StringValue::equals(Value *other) {
     return other->has_type(ValueType::String) && this->content == other->as<StringValue>()->content;
 }
+
+Value *StringValue::copy() {
+    return new StringValue(this->content);
+}
