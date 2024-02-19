@@ -24,5 +24,6 @@ if [ 0 -ne ${#FAILED[@]} ]; then
     echo $'\e[0m';
     exit 1
 else
+    echo $'\e[32m[test_all.sh] All files ran successfully\e[0m'
     exit 0
 fi
