@@ -18,6 +18,7 @@ int main (int argc, char *argv[]) {
 
 		string src;
 		Parser p;
+        Node* program;
 		Interpreter interpreter;
         Value *returned;
 
@@ -36,7 +37,7 @@ int main (int argc, char *argv[]) {
             // if empty string is given
             if (tokens.size() == 1) continue;
 			p.reset(tokens, src);
-			Node* program = p.block();
+			program = p.parse();
 
 			if (p.hadError) continue;
 
