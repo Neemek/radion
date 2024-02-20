@@ -34,7 +34,7 @@ int main (int argc, char *argv[]) {
 			std::getline(cin, src);
 
 			vector<Token> tokens = Lexer::lex(src);
-            // if empty string is given
+            // if no tokens are parsed (only END)
             if (tokens.size() == 1) continue;
 			p.reset(tokens, src);
 			program = p.parse();
