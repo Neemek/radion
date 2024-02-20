@@ -23,7 +23,7 @@ int main (int argc, char *argv[]) {
         Value *returned;
 
         bool replRunning = true;
-        interpreter.symbols->put("exit", new NativeCallable("exit", [=](std::vector<Value*> args) mutable {
+        interpreter.symbols->put("exit", new NativeCallable("exit", [&replRunning](std::vector<Value*> args) {
             replRunning = false;
             std::cout << "exiting" << std::endl;
             return NIL_VALUE;
