@@ -153,16 +153,16 @@ Node* Parser::factor() {
             n->name = name;
             n->start = start;
 
-            // if closes immediatly, return with no arguments
-            if (this->accept(TokenType::CLOSE_PAREN)) return n;
-            
-            // otherwise, parse arguments 
-            int i = 0;
-            do {
-                n->params.push_back(this->expression());
-            } while (++i < MAX_PARAMS && this->accept(TokenType::COMMA));
+            // if it doesnt close immediately
+            if (!this->accept(TokenType::CLOSE_PAREN)) {
+                // parse arguments
+                int i = 0;
+                do {
+                    n->params.push_back(this->expression());
+                } while (++i < MAX_PARAMS && this->accept(TokenType::COMMA));
 
-            this->expect(TokenType::CLOSE_PAREN, ("Maximum amount of parameters is "+to_string(MAX_PARAMS)).c_str());
+                this->expect(TokenType::CLOSE_PAREN, ("Maximum amount of parameters is "+to_string(MAX_PARAMS)).c_str());
+            }
             n->end = this->prev_end;
             return n;
             
