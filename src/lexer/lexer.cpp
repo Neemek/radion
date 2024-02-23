@@ -144,7 +144,7 @@ vector<Token> Lexer::lex(std::string src)
             } else if (isalpha(c.at(0))) {
                 string v;
                 v += c;
-                while (pos+1 < src.length() && name_acceptable(src.at(pos))) {
+                while (pos+1 < src.length() && name_acceptable(src.at(pos+1))) {
                     v += src.at(++pos);
                 }
 
