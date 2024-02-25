@@ -79,14 +79,13 @@ Value* Interpreter::evaluate(Node *programNode)
             this->evaluate(statement);
 
             if (this->returned != nullptr) {
-                if (block->isCapturing) {
-                    Value* ret = this->returned;
-                    this->returned = nullptr;
+                if (!block->isCapturing) break;
 
-                    return ret;
-                }
-                break;
-            } else continue;
+                Value *ret = this->returned;
+                this->returned = nullptr;
+
+                return ret;
+            }
         }
         this->table_ascend();
     }
