@@ -18,14 +18,13 @@ int main (int argc, char *argv[]) {
 
 		string src;
 		Parser p;
-        Node* program;
+        BlockNode* program;
 		Interpreter interpreter;
         Value *returned;
 
         bool replRunning = true;
         interpreter.symbols->put("exit", new NativeCallable("exit", [&replRunning](std::vector<Value*> args) {
             replRunning = false;
-            std::cout << "exiting" << std::endl;
             return NIL_VALUE;
         }));
 
@@ -42,9 +41,11 @@ int main (int argc, char *argv[]) {
 			if (p.hadError) continue;
 
             try {
-                returned = interpreter.evaluate(program);
+                for (Node *statement : program->statements) {
+                    returned = interpreter.evaluate(statement);
 
-                std::cout << returned->to_string() << std::endl;
+                    std::cout << returned->to_string() << std::endl;
+                }
             } catch (RuntimeException &e) {
                 e.print(src);
             }
