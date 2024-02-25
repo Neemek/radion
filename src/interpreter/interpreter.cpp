@@ -74,20 +74,18 @@ Value* Interpreter::evaluate(Node *programNode)
     {
         auto *block = (BlockNode *)programNode;
         this->table_descend();
-        for (int i = 0; i < block->statements.size(); i++)
+        for (auto *statement : block->statements)
         {
-            Node *statement = block->statements.at(i);
             this->evaluate(statement);
 
             if (this->returned != nullptr) {
-                if (block->isCapturing) {
-                    Value* ret = this->returned;
-                    this->returned = nullptr;
+                if (!block->isCapturing) break;
 
-                    return ret;
-                }
-                break;
-            } else continue;
+                Value *ret = this->returned;
+                this->returned = nullptr;
+
+                return ret;
+            }
         }
         this->table_ascend();
     }
@@ -115,7 +113,10 @@ Value* Interpreter::evaluate(Node *programNode)
     case NodeType::Reference:
     {
         auto *reference = (ReferenceNode *)programNode;
-        return this->symbols->get(reference->name);
+        Value* value = this->symbols->get(reference->name);
+
+        if (value == nullptr) this->exit("no variable of name \""+reference->name+"\"");
+        return value;
     }
     case NodeType::Define:
     {

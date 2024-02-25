@@ -144,7 +144,7 @@ vector<Token> Lexer::lex(std::string src)
             } else if (isalpha(c.at(0))) {
                 string v;
                 v += c;
-                while (pos+1 < src.length() && (isalpha(src.at(pos+1)) || src.at(pos+1) == '_')) {
+                while (pos+1 < src.length() && name_acceptable(src.at(pos+1))) {
                     v += src.at(++pos);
                 }
 
@@ -175,6 +175,10 @@ vector<Token> Lexer::lex(std::string src)
     tokens.emplace_back(TokenType::END, "", pos+1);
 
     return tokens;
+}
+
+bool name_acceptable(char c) {
+    return isalpha(c) || isdigit(c) || c == '_';
 }
 
 void print_tokens(const std::string& src, const vector<Token>& tokens) {

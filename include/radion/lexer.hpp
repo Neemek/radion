@@ -11,5 +11,7 @@ public:
 	static vector<Token> lex(std::string src);
 };
 
-void print_tokens(const std::string& src, const vector<Token>& tokens);
+// if the character is acceptable, assuming the first character is alpha
+bool name_acceptable(char c);
 
+void print_tokens(const std::string& src, const vector<Token>& tokens);
