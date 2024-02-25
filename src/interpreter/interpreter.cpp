@@ -74,9 +74,8 @@ Value* Interpreter::evaluate(Node *programNode)
     {
         auto *block = (BlockNode *)programNode;
         this->table_descend();
-        for (int i = 0; i < block->statements.size(); i++)
+        for (auto *statement : block->statements)
         {
-            Node *statement = block->statements.at(i);
             this->evaluate(statement);
 
             if (this->returned != nullptr) {
