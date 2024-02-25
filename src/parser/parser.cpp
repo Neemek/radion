@@ -50,7 +50,7 @@ void Parser::nextToken() {
     this->curr = &this->tokens[++this->pos];
 
     this->start = this->curr->pos();
-    if (this->prev != nullptr) this->prev_end = this->prev->pos() + this->prev->lexeme().size();
+    if (this->pos != 0) this->prev_end = this->prev->pos() + this->prev->lexeme().size();
 }
 
 std::string get_position_descriptor(std::string src, int pos) {
