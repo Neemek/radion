@@ -332,6 +332,23 @@ bool Interpreter::evaluate_boolean(Node* expression) {
     return false;
 }
 
+std::string operation_to_symbol(ArithmeticOperation operation) {
+    switch (operation) {
+        case ADD:
+            return "+";
+        case SUBTRACT:
+            return "-";
+        case MULTIPLY:
+            return "*";
+        case DIVIDE:
+            return "/";
+        case MODULO:
+            return "%";
+        case EXPONENTIATION:
+            return "**";
+    }
+}
+
 void Interpreter::table_descend() {
     this->symbols = this->symbols->sub();
 }

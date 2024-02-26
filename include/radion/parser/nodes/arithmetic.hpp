@@ -7,6 +7,7 @@ enum ArithmeticOperation {
     MODULO,     EXPONENTIATION,
 };
 
+std::string operation_to_symbol(ArithmeticOperation operation);
 
 struct ArithmeticNode : Node {
     ArithmeticNode() : Node(NodeType::Arithmetic) {}
