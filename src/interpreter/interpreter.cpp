@@ -256,37 +256,83 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
     if (right == nullptr)
         this->exit("Missing value on right side of arithmetic");
 
-    int a;
-    int b;
+    float a;
+    float b;
 
-    if (left->get_type() == ValueType::Int) a = left->as<IntValue>()->number;
-    else if (left->get_type() == ValueType::Boolean) a = left->as<BooleanValue>()->boolean ? 1 : 0;
-    else if (left->get_type() == ValueType::String && arithmeticNode->op == ArithmeticOperation::ADD) return new StringValue(left->to_string() + right->to_string());
-    else this->exit("invalid value for left side of arithmetic: "+left->to_string()+" (type "+left->get_typename()+")");
-    
-    if (right->get_type() == ValueType::Int) b = right->as<IntValue>()->number;
-    else if (right->get_type() == ValueType::Boolean) b = right->as<BooleanValue>()->boolean ? 1 : 0;
-    else if (right->get_type() == ValueType::String && arithmeticNode->op == ArithmeticOperation::ADD) return new StringValue(left->to_string() + right->to_string());
-    else this->exit("invalid value for right side of arithmetic: "+right->to_string()+" (type "+right->get_typename()+")");
+    ValueType returnValue = ValueType::Int;
+
+    switch (left->get_type()) {
+        case Int:
+            a = left->as<IntValue>()->number;
+            break;
+        case Float:
+            a = left->as<FloatValue>()->number;
+            returnValue = ValueType::Float;
+            break;
+        case Boolean:
+            a = left->as<BooleanValue>()->boolean ? 1 : 0;
+            break;
+        case String:
+            if (arithmeticNode->op == ArithmeticOperation::ADD)
+                return new StringValue(left->to_string() + right->to_string());
+            this->exit("invalid operation: "+operation_to_symbol(arithmeticNode->op));
+            break;
+        default:
+            this->exit("invalid value for right side of arithmetic: "+right->to_string()+" (type "+right->get_typename()+")");
+            break;
+    }
+
+    switch (right->get_type()) {
+        case Int:
+            b = right->as<IntValue>()->number;
+            break;
+        case Float:
+            b = right->as<FloatValue>()->number;
+            returnValue = ValueType::Float;
+            break;
+        case Boolean:
+            b = right->as<BooleanValue>()->boolean ? 1 : 0;
+            break;
+        case String:
+            if (arithmeticNode->op == ArithmeticOperation::ADD)
+                return new StringValue(left->to_string() + right->to_string());
+            this->exit("invalid operation: "+operation_to_symbol(arithmeticNode->op));
+            break;
+        default:
+            this->exit("invalid value for right side of arithmetic: "+right->to_string()+" (type "+right->get_typename()+")");
+            break;
+    }
+
+    float result;
 
     switch (arithmeticNode->op)
     {
     case ArithmeticOperation::ADD:
-        return new IntValue(a + b);
+        result = a + b;
+        break;
     case ArithmeticOperation::SUBTRACT:
-        return new IntValue(a - b);
+        result = a - b;
+        break;
     case ArithmeticOperation::MULTIPLY:
-        return new IntValue(a * b);
+        result = a * b;
+        break;
     case ArithmeticOperation::DIVIDE:
-        return new IntValue(a / b);
+        result = a / b;
+        if (modf(a, &b) != 0.0f) returnValue = ValueType::Float;
+        break;
     case ArithmeticOperation::MODULO:
-        return new IntValue(a % b);
+        result = modf(a, &b);
+        break;
     case ArithmeticOperation::EXPONENTIATION:
-        return new IntValue(std::pow(a, b));
+        result = std::pow(a, b);
+        break;
 
     default:
         this->exit("Unimplemented arithmetic operation (type "+std::to_string(arithmeticNode->op)+")");
     }
+
+    if (returnValue == ValueType::Float) return new FloatValue(result);
+    return new IntValue((int)result);
 }
 
 bool Interpreter::evaluate_boolean(Node* expression) {
