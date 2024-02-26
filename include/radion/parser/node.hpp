@@ -4,6 +4,7 @@
 enum NodeType {
     // literals
     IntLiteral,
+    FloatLiteral,
     StringLiteral,
     BooleanLiteral,
     NilLiteral,
