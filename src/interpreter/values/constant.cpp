@@ -17,7 +17,11 @@ bool BooleanValue::equals(Value *other) {
 }
 
 Value *BooleanValue::copy() {
-    return this->boolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+    return BooleanValue::from(this->boolean);
+}
+
+BooleanValue *BooleanValue::from(bool boolean) {
+    return boolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 }
 
 std::string NilValue::to_string() {

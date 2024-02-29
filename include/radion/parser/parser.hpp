@@ -28,6 +28,7 @@ private:
     void error(Token* token, const char* message);
 
     bool accept(TokenType type);
+    bool accept_seq(std::vector<TokenType> ts);
     void expect(TokenType type, const char* error);
 
     Node* factor();

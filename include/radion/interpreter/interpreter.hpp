@@ -29,7 +29,7 @@ private:
     Node *current_node = nullptr;
 };
 
-bool cmp_any_int(Value* a, Value* b, const std::function<bool(int, int)>& comparison);
+bool cmp_any_num(Value* a, Value* b, const std::function<bool(float, float)>& compare);
 
 
 void printAST(Node* root);

@@ -83,6 +83,16 @@ bool Parser::accept(TokenType type) {
     return false;
 };
 
+bool Parser::accept_seq(std::vector<TokenType> ts) {
+    for (int i = 0; i < ts.size(); ++i) {
+        if (this->tokens.at(pos+i).type() != ts.at(i)) return false;
+    }
+    for (auto _ : ts) {
+        this->nextToken();
+    }
+    return true;
+};
+
 void Parser::expect(TokenType type, const char* error) {
     if (!this->accept(type)) {
         this->error(this->curr, error);
@@ -109,13 +119,29 @@ Node* Parser::factor() {
 
         return n;
     } else if (this->accept(TokenType::NUMBER)) {
-        auto* n = new IntLiteralNode;
-        n->start = start;
+        int num = stoi(this->prev->lexeme());
+        if (this->accept_seq(std::vector({ TokenType::DOT, TokenType::NUMBER }))) {
+            auto *n = new FloatLiteralNode;
+            n->start = start;
 
-        n->number = stoi(this->prev->lexeme());
-        n->end = this->prev_end;
+            int other_num = stoi(this->prev->lexeme());
+            float behind_decimal_point = 0;
+            // Expensive, but doesnt impact runtime performance :D
+            if (other_num != 0) behind_decimal_point = ((float)other_num) / std::pow(10, std::floor(std::log(other_num)+1));
 
-        return n;
+            n->number = (float)num + behind_decimal_point;
+
+            n->end = this->prev_end;
+            return n;
+        } else {
+            auto *n = new IntLiteralNode;
+            n->start = start;
+
+            n->number = num;
+            n->end = this->prev_end;
+
+            return n;
+        }
     } else if (this->accept(TokenType::TRUE) || this->accept(TokenType::FALSE)) {
         auto* n = new BooleanLiteralNode;
         n->start = start;
@@ -420,4 +446,4 @@ Node* Parser::block() {
         return n;
     }
     return this->statement();
-};
+}

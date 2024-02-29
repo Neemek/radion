@@ -54,6 +54,8 @@ Value* Interpreter::evaluate(Node *programNode)
         return ((BooleanLiteralNode *)programNode)->boolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     case NodeType::IntLiteral:
         return new IntValue(((IntLiteralNode *)programNode)->number);
+    case NodeType::FloatLiteral:
+        return new FloatValue(((FloatLiteralNode *)programNode)->number);
     case NodeType::StringLiteral:
         return new StringValue(((StringLiteralNode *)programNode)->string);
     case NodeType::NilLiteral:
@@ -138,9 +140,9 @@ Value* Interpreter::evaluate(Node *programNode)
     break;
 
     case NodeType::Comparison:
-        return new BooleanValue(this->evaluate_boolean(programNode));
+        return BooleanValue::from(this->evaluate_boolean(programNode));
     case NodeType::Not:
-        return new BooleanValue(!this->evaluate_boolean(programNode));
+        return BooleanValue::from(!this->evaluate_boolean(programNode));
 
     case NodeType::Change:
     {
@@ -318,10 +320,10 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         break;
     case ArithmeticOperation::DIVIDE:
         result = a / b;
-        if (modf(a, &b) != 0.0f) returnValue = ValueType::Float;
+        if (fmod(a, b) != 0.0f) returnValue = ValueType::Float;
         break;
     case ArithmeticOperation::MODULO:
-        result = modf(a, &b);
+        result = fmod(a, b);
         break;
     case ArithmeticOperation::EXPONENTIATION:
         result = std::pow(a, b);
@@ -352,13 +354,13 @@ bool Interpreter::evaluate_boolean(Node* expression) {
             return !a->equals(b);
 
         case ComparisonType::Greater:
-            return cmp_any_int(a, b, [](int l, int r) { return l > r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l > r; });
         case ComparisonType::GreaterOrEqual:
-            return cmp_any_int(a, b, [](int l, int r) { return l >= r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l >= r; });
         case ComparisonType::Less:
-            return cmp_any_int(a, b, [](int l, int r) { return l < r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l < r; });
         case ComparisonType::LessOrEqual:
-            return cmp_any_int(a, b, [](int l, int r) { return l <= r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l <= r; });
 
         default:
             break;
@@ -368,8 +370,13 @@ bool Interpreter::evaluate_boolean(Node* expression) {
     default:
         Value* value = this->evaluate(expression);
 
-        if (value->get_type() == ValueType::Int) {
-            return value->as<IntValue>()->number != 0;
+        switch (value->get_type()) {
+            case ValueType::Int:
+                return value->as<IntValue>()->number != 0;
+            case ValueType::Float:
+                return value->as<FloatValue>()->number != 0.0f;
+            default:
+                break;
         }
         break;
     }
@@ -406,20 +413,32 @@ void Interpreter::table_ascend() {
     this->symbols = super;
 }
 
-bool cmp_any_int(Value* a, Value* b, const std::function<bool(int, int)>& comparison) {
-    int ia;
-    if (a->get_type() == ValueType::Int)
-        ia = a->as<IntValue>()->number;
-    else
-        throw RuntimeException(a->get_typename()+" is not comparable as an int");
+bool cmp_any_num(Value* a, Value* b, const std::function<bool(float, float)>& compare) {
+    float ia;
+    switch (a->get_type()) {
+        case Int:
+            ia = a->as<IntValue>()->number;
+            break;
+        case Float:
+            ia = a->as<FloatValue>()->number;
+            break;
+        default:
+            throw RuntimeException(a->get_typename()+" is not comparable as a number");
+    }
 
-    int ib;
-    if (b->get_type() == ValueType::Int)
-        ib = b->as<IntValue>()->number;
-    else
-        throw RuntimeException(b->get_typename()+" is not comparable as an int");
+    float ib;
+    switch (b->get_type()) {
+        case Int:
+            ib = b->as<IntValue>()->number;
+            break;
+        case Float:
+            ib = b->as<FloatValue>()->number;
+            break;
+        default:
+            throw RuntimeException(b->get_typename()+" is not comparable as a number");
+    }
 
-    return comparison(ia, ib);
+    return compare(ia, ib);
 }
 
 void printAST(Node* root) {
