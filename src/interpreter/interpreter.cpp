@@ -399,6 +399,8 @@ std::string operation_to_symbol(ArithmeticOperation operation) {
             return "*";
         case DIVIDE:
             return "/";
+        case INTEGER_DIVISION:
+            return "//";
         case MODULO:
             return "%";
         case EXPONENTIATION:
