@@ -4,6 +4,7 @@
 
 #include "radion/interpreter/values/number.hpp"
 
+#include <cmath>
 #include <sstream>
 
 IntValue::IntValue(int initial) : Value(ValueType::Int) {
@@ -32,13 +33,13 @@ DecimalValue::DecimalValue(double initial) : Value(ValueType::Decimal) {
 std::string DecimalValue::to_string() {
     std::stringstream stream;
 
-    stream << floor(this->number) << ".";
+    stream << std::floor(this->number) << ".";
     double n = this->number;
     do {
         n *= 10;
         int digit = (int)n % 10;
         stream << digit_to_char(digit);
-    } while (floor(n) != n);
+    } while (std::floor(n) != n);
 
     return stream.str();
 }
