@@ -26,3 +26,5 @@ public:
     bool equals(Value *other) override;
     Value * copy() override;
 };
+
+char digit_to_char(int digit);
