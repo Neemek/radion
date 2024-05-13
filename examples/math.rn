@@ -7,7 +7,38 @@ println(sum(5, 6))
 func fib(n) {
     if n <= 2 return n
 
+    println("n", n, "| fib(n-1)", fib(n-1), "| fib(n-2)", fib(n-2))
+
     return fib(n-1) + fib(n-2)
 }
 
-println(fib(2))
+for i in 0..15 println(i, fib(i))
+
+println(1.0 / 2.0)
+println(1 / 2)
+
+println()
+
+approximate_sqrt = func(n, g) (g+n/g)/2
+
+func iterative_sqrt(num, guess, i) {
+    if i <= 0 return num
+
+    approximation = approximate_sqrt(num, guess)
+    if approximation == guess return approximation
+
+    return iterative_sqrt(num, approximation, i-1)
+}
+
+for i in 1..20 {
+    println("sqrt of", i, "is approximately", iterative_sqrt(i, 1, 100))
+}
+
+# integer division
+/*
+for i in 1..20 {
+    for j in i..20 {
+        println(i, "//", j, "=", i//j)
+    }
+}
+*/

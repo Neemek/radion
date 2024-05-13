@@ -1,0 +1,15 @@
+start_length = 100
+
+func size(n) {
+    return start_length * (0.9**n)
+}
+
+pieces = 8
+total_length = 0
+
+for n in 0..pieces {
+    println("linjestykke", n, size(n))
+    total_length = total_length + size(n)
+}
+
+println(pieces, total_length)
