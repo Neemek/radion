@@ -28,6 +28,7 @@ void RuntimeException::print(std::string src) {
     int linepos = 0;
 
     int i;
+    // find the closest newline before where the error occurred
     for (i = 0; i < this->error_causer->start; ++i) {
         char c = src.at(i);
 
@@ -36,15 +37,20 @@ void RuntimeException::print(std::string src) {
         }
     }
 
+    // find start of next line
     while (i < src.size() && src.at(i) != '\n') i++;
 
-    line = src.substr(linepos, i-linepos);
+    // isolate the line to show it to the user
+    line = src.substr(linepos+1, i-linepos-1);
 
+    // convert position to a human-friendly format
     std::string position_descriptor = get_position_descriptor(src, this->error_causer->start);
 
+    // output
     std::cout << position_descriptor << " " << line << std::endl;
 
-    for (int j = 0; j < this->error_causer->start - linepos + position_descriptor.size() + 1; ++j) std::cout << " ";
+    // offset
+    for (int j = 0; j < this->error_causer->start - linepos + position_descriptor.size(); ++j) std::cout << " ";
     for (int j = 0; j < this->error_causer->end - this->error_causer->start; ++j) std::cout << "^";
 
     std::cout << std::endl;

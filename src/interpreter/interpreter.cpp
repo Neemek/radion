@@ -320,7 +320,11 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         break;
     case ArithmeticOperation::DIVIDE:
         result = a / b;
-        if (fmod(a, b) != 0.0f) returnValue = ValueType::Float;
+        if (returnValue != ValueType::Float && fmod(a, b) != 0.0f) returnValue = ValueType::Float;
+        break;
+    case ArithmeticOperation::INTEGER_DIVISION:
+        result = a / b;
+        returnValue = ValueType::Int;
         break;
     case ArithmeticOperation::MODULO:
         result = fmod(a, b);
