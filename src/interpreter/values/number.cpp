@@ -15,7 +15,7 @@ std::string IntValue::to_string() {
 }
 
 bool IntValue::equals(Value *other) {
-    if (other->has_type(ValueType::Float))
+    if (other->has_type(ValueType::Decimal))
         return other->equals(this);
 
     return other->has_type(ValueType::Int) && this->number == other->as<IntValue>()->number;
@@ -25,11 +25,11 @@ Value *IntValue::copy() {
     return new IntValue(this->number);
 }
 
-FloatValue::FloatValue(float initial) : Value(ValueType::Float) {
+DecimalValue::DecimalValue(float initial) : Value(ValueType::Decimal) {
     this->number = initial;
 }
 
-std::string FloatValue::to_string() {
+std::string DecimalValue::to_string() {
     std::stringstream stream;
 
     stream << floor(this->number) << ".";
@@ -47,13 +47,13 @@ char digit_to_char(int digit) {
     return '0' + digit;
 }
 
-bool FloatValue::equals(Value *other) {
+bool DecimalValue::equals(Value *other) {
     if (other->has_type(ValueType::Int))
         return this->number == (float)other->as<IntValue>()->number;
 
-    return other->has_type(ValueType::Float) && other->as<FloatValue>()->number == this->number;
+    return other->has_type(ValueType::Decimal) && other->as<DecimalValue>()->number == this->number;
 }
 
-Value *FloatValue::copy() {
-    return new FloatValue(this->number);
+Value *DecimalValue::copy() {
+    return new DecimalValue(this->number);
 }

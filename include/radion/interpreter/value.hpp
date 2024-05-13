@@ -5,7 +5,7 @@
 
 enum ValueType {
     // Primitive
-    Int,    Float,
+    Int,    Decimal,
     String, List,
     // defined
     Class,  Func,

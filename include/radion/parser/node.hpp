@@ -4,7 +4,7 @@
 enum NodeType {
     // literals
     IntLiteral,
-    FloatLiteral,
+    DecimalLiteral,
     StringLiteral,
     BooleanLiteral,
     NilLiteral,

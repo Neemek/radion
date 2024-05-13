@@ -16,9 +16,9 @@ public:
     Value * copy() override;
 };
 
-class FloatValue : public Value {
+class DecimalValue : public Value {
 public:
-    explicit FloatValue(float initial);
+    explicit DecimalValue(float initial);
 
     float number;
 

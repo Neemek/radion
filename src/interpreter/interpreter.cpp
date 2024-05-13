@@ -54,8 +54,8 @@ Value* Interpreter::evaluate(Node *programNode)
         return ((BooleanLiteralNode *)programNode)->boolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     case NodeType::IntLiteral:
         return new IntValue(((IntLiteralNode *)programNode)->number);
-    case NodeType::FloatLiteral:
-        return new FloatValue(((FloatLiteralNode *)programNode)->number);
+    case NodeType::DecimalLiteral:
+        return new DecimalValue(((DecimalLiteralNode *)programNode)->number);
     case NodeType::StringLiteral:
         return new StringValue(((StringLiteralNode *)programNode)->string);
     case NodeType::NilLiteral:
@@ -267,9 +267,9 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         case Int:
             a = left->as<IntValue>()->number;
             break;
-        case Float:
-            a = left->as<FloatValue>()->number;
-            returnValue = ValueType::Float;
+        case Decimal:
+            a = left->as<DecimalValue>()->number;
+            returnValue = ValueType::Decimal;
             break;
         case Boolean:
             a = left->as<BooleanValue>()->boolean ? 1 : 0;
@@ -288,9 +288,9 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         case Int:
             b = right->as<IntValue>()->number;
             break;
-        case Float:
-            b = right->as<FloatValue>()->number;
-            returnValue = ValueType::Float;
+        case Decimal:
+            b = right->as<DecimalValue>()->number;
+            returnValue = ValueType::Decimal;
             break;
         case Boolean:
             b = right->as<BooleanValue>()->boolean ? 1 : 0;
@@ -320,7 +320,7 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         break;
     case ArithmeticOperation::DIVIDE:
         result = a / b;
-        if (returnValue != ValueType::Float && fmod(a, b) != 0.0f) returnValue = ValueType::Float;
+        if (returnValue != ValueType::Decimal && fmod(a, b) != 0.0f) returnValue = ValueType::Decimal;
         break;
     case ArithmeticOperation::INTEGER_DIVISION:
         result = a / b;
@@ -337,7 +337,7 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         this->exit("Unimplemented arithmetic operation (type "+std::to_string(arithmeticNode->op)+")");
     }
 
-    if (returnValue == ValueType::Float) return new FloatValue(result);
+    if (returnValue == ValueType::Decimal) return new DecimalValue(result);
     return new IntValue((int)result);
 }
 
@@ -377,8 +377,8 @@ bool Interpreter::evaluate_boolean(Node* expression) {
         switch (value->get_type()) {
             case ValueType::Int:
                 return value->as<IntValue>()->number != 0;
-            case ValueType::Float:
-                return value->as<FloatValue>()->number != 0.0f;
+            case ValueType::Decimal:
+                return value->as<DecimalValue>()->number != 0.0f;
             default:
                 break;
         }
@@ -425,8 +425,8 @@ bool cmp_any_num(Value* a, Value* b, const std::function<bool(float, float)>& co
         case Int:
             ia = a->as<IntValue>()->number;
             break;
-        case Float:
-            ia = a->as<FloatValue>()->number;
+        case Decimal:
+            ia = a->as<DecimalValue>()->number;
             break;
         default:
             throw RuntimeException(a->get_typename()+" is not comparable as a number");
@@ -437,8 +437,8 @@ bool cmp_any_num(Value* a, Value* b, const std::function<bool(float, float)>& co
         case Int:
             ib = b->as<IntValue>()->number;
             break;
-        case Float:
-            ib = b->as<FloatValue>()->number;
+        case Decimal:
+            ib = b->as<DecimalValue>()->number;
             break;
         default:
             throw RuntimeException(b->get_typename()+" is not comparable as a number");

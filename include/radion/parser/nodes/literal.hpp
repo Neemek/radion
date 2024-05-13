@@ -8,8 +8,8 @@ struct IntLiteralNode : Node {
     int number{};
 };
 
-struct FloatLiteralNode : Node {
-    FloatLiteralNode() : Node(NodeType::FloatLiteral) {}
+struct DecimalLiteralNode : Node {
+    DecimalLiteralNode() : Node(NodeType::DecimalLiteral) {}
     float number{};
 };
 

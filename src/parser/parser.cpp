@@ -121,7 +121,7 @@ Node* Parser::factor() {
     } else if (this->accept(TokenType::NUMBER)) {
         int num = stoi(this->prev->lexeme());
         if (this->accept_seq(std::vector({ TokenType::DOT, TokenType::NUMBER }))) {
-            auto *n = new FloatLiteralNode;
+            auto *n = new DecimalLiteralNode;
             n->start = start;
 
             int other_num = stoi(this->prev->lexeme());
