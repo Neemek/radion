@@ -34,7 +34,11 @@ vector<Token> Lexer::lex(std::string src)
             else tokens.emplace_back(TokenType::MINUS, c, start);
             break;
         case '*':
-            tokens.emplace_back(TokenType::STAR, c, start);
+            if (pos+1 < src.length() && src.at(pos+1) == '*') {
+                tokens.emplace_back(TokenType::DOUBLE_STAR, "**", start);
+                pos++;
+            }
+            else tokens.emplace_back(TokenType::STAR, c, start);
             break;
         case '/':
             if (pos+1 < src.length() && src.at(pos+1) == '*') {
@@ -42,7 +46,10 @@ vector<Token> Lexer::lex(std::string src)
                     pos++;
                 } while (pos+1 < src.length() && !(src.at(pos) == '*' && src.at(pos+1) == '/'));
                 pos++;
-            } else {
+            } else if (pos+1 < src.length() && src.at(pos+1) == '/') {
+                tokens.emplace_back(TokenType::DOUBLE_SLASH, "//", start);
+                pos++;
+            } else  {
                 tokens.emplace_back(TokenType::SLASH, c, start);
             }
             break;
