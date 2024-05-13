@@ -21,8 +21,9 @@ enum TokenType
     MINUS,
     DOUBLE_MINUS,
     STAR,
+    DOUBLE_STAR,
     SLASH,
-    POWER,
+    DOUBLE_SLASH,
     PERCENTAGE,
 
     // Truthyness

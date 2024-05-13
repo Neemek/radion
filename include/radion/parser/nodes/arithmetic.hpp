@@ -3,7 +3,7 @@
 
 enum ArithmeticOperation {
     ADD,        SUBTRACT,
-    MULTIPLY,   DIVIDE,
+    MULTIPLY,   DIVIDE, INTEGER_DIVISION,
     MODULO,     EXPONENTIATION,
 };
 

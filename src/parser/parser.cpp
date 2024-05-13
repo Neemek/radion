@@ -282,6 +282,17 @@ Node* Parser::range() {
 
         n->end = this->prev_end;
         return n;
+    } else if (this->accept(TokenType::DOUBLE_STAR)) {
+        // Exponentiation
+        auto* n = new ArithmeticNode;
+        n->op = ArithmeticOperation::EXPONENTIATION;
+        n->start = start;
+
+        n->left = f;
+        n->right = this->factor();
+
+        n->end = this->prev_end;
+        return n;
     } else {
         return f;
     }
@@ -291,13 +302,16 @@ Node* Parser::term() {
     int start = this->start;
     Node* f = this->range();
 
-    if (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH)) {
+    if (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH) || this->accept(TokenType::DOUBLE_SLASH)) {
         auto* n = new ArithmeticNode;
         n->start = start;
 
         // Get operation
         n->op = this->prev->type() == TokenType::STAR 
-            ? ArithmeticOperation::MULTIPLY : ArithmeticOperation::DIVIDE;
+            ? ArithmeticOperation::MULTIPLY
+            : this->prev->type() == TokenType::SLASH
+                ? ArithmeticOperation::DIVIDE
+                : ArithmeticOperation::INTEGER_DIVISION;
         n->left = f;
 
         n->right = this->term();
