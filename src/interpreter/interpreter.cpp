@@ -277,7 +277,7 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
         case String:
             if (arithmeticNode->op == ArithmeticOperation::ADD)
                 return new StringValue(left->to_string() + right->to_string());
-            this->exit("invalid operation: "+operation_to_symbol(arithmeticNode->op));
+            this->exit("invalid string operation: "+operation_to_symbol(arithmeticNode->op));
             break;
         default:
             this->exit("invalid value for right side of arithmetic: "+right->to_string()+" (type "+right->get_typename()+")");
