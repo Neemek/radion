@@ -10,7 +10,7 @@ struct IntLiteralNode : Node {
 
 struct DecimalLiteralNode : Node {
     DecimalLiteralNode() : Node(NodeType::DecimalLiteral) {}
-    float number{};
+    double number{};
 };
 
 struct StringLiteralNode : Node {

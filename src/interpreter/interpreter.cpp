@@ -258,8 +258,8 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
     if (right == nullptr)
         this->exit("Missing value on right side of arithmetic");
 
-    float a;
-    float b;
+    double a;
+    double b;
 
     ValueType returnValue = ValueType::Int;
 
@@ -305,7 +305,7 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
             break;
     }
 
-    float result;
+    double result;
 
     switch (arithmeticNode->op)
     {
@@ -419,8 +419,8 @@ void Interpreter::table_ascend() {
     this->symbols = super;
 }
 
-bool cmp_any_num(Value* a, Value* b, const std::function<bool(float, float)>& compare) {
-    float ia;
+bool cmp_any_num(Value* a, Value* b, const std::function<bool(double, double)>& compare) {
+    double ia;
     switch (a->get_type()) {
         case Int:
             ia = a->as<IntValue>()->number;
@@ -432,7 +432,7 @@ bool cmp_any_num(Value* a, Value* b, const std::function<bool(float, float)>& co
             throw RuntimeException(a->get_typename()+" is not comparable as a number");
     }
 
-    float ib;
+    double ib;
     switch (b->get_type()) {
         case Int:
             ib = b->as<IntValue>()->number;

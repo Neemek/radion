@@ -125,11 +125,11 @@ Node* Parser::factor() {
             n->start = start;
 
             int other_num = stoi(this->prev->lexeme());
-            float behind_decimal_point = 0;
+            double behind_decimal_point = 0;
             // Expensive, but doesnt impact runtime performance :D
-            if (other_num != 0) behind_decimal_point = ((float)other_num) / std::pow(10, std::floor(std::log(other_num)+1));
+            if (other_num != 0) behind_decimal_point = ((double)other_num) / std::pow(10, std::floor(std::log(other_num)+1));
 
-            n->number = (float)num + behind_decimal_point;
+            n->number = (double)num + behind_decimal_point;
 
             n->end = this->prev_end;
             return n;

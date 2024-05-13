@@ -25,7 +25,7 @@ Value *IntValue::copy() {
     return new IntValue(this->number);
 }
 
-DecimalValue::DecimalValue(float initial) : Value(ValueType::Decimal) {
+DecimalValue::DecimalValue(double initial) : Value(ValueType::Decimal) {
     this->number = initial;
 }
 
@@ -33,7 +33,7 @@ std::string DecimalValue::to_string() {
     std::stringstream stream;
 
     stream << floor(this->number) << ".";
-    float n = this->number;
+    double n = this->number;
     do {
         n *= 10;
         int digit = (int)n % 10;
@@ -49,7 +49,7 @@ char digit_to_char(int digit) {
 
 bool DecimalValue::equals(Value *other) {
     if (other->has_type(ValueType::Int))
-        return this->number == (float)other->as<IntValue>()->number;
+        return this->number == (double)other->as<IntValue>()->number;
 
     return other->has_type(ValueType::Decimal) && other->as<DecimalValue>()->number == this->number;
 }

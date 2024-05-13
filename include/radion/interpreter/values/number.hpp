@@ -18,9 +18,9 @@ public:
 
 class DecimalValue : public Value {
 public:
-    explicit DecimalValue(float initial);
+    explicit DecimalValue(double initial);
 
-    float number;
+    double number;
 
     std::string to_string() override;
     bool equals(Value *other) override;
