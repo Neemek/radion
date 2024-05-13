@@ -16,13 +16,15 @@ public:
     Value * copy() override;
 };
 
-class FloatValue : public Value {
+class DecimalValue : public Value {
 public:
-    explicit FloatValue(float initial);
+    explicit DecimalValue(double initial);
 
-    float number;
+    double number;
 
     std::string to_string() override;
     bool equals(Value *other) override;
     Value * copy() override;
 };
+
+char digit_to_char(int digit);

@@ -13,6 +13,8 @@ public:
     bool boolean;
     bool equals(Value *other) override;
     Value * copy() override;
+
+    static BooleanValue *from(bool boolean);
 };
 
 static BooleanValue* BOOLEAN_TRUE = new BooleanValue(true);

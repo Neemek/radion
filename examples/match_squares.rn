@@ -1,0 +1,15 @@
+sqr = func(n) 2*n*(n+1)
+
+max = 10000
+
+used = 0
+i = 0
+
+while ((used + sqr(i)) < max) {
+    used = used + sqr(i++)
+    println(i, used)
+}
+
+println("du kan lage opp til", i, "figurer med 10 000 fyrstikker, og du vil bruke", used, "av dem ( du har igjen", max-used, ")")
+
+

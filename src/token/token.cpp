@@ -55,10 +55,12 @@ std::string ttype_to_string(TokenType type) {
 		return "DOUBLE_MINUS";
 	case TokenType::STAR:
 		return "STAR";
+    case TokenType::DOUBLE_STAR:
+        return "DOUBLE_STAR";
 	case TokenType::SLASH:
 		return "SLASH";
-	case TokenType::POWER:
-		return "POWER";
+	case TokenType::DOUBLE_SLASH:
+		return "DOUBLE_SLASH";
 	case TokenType::PERCENTAGE:
 		return "PERCENTAGE";
 	case TokenType::EQUAL:

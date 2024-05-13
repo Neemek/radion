@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <utility>
+#include <cmath>
 
 Parser::Parser() = default;
 
@@ -83,6 +84,16 @@ bool Parser::accept(TokenType type) {
     return false;
 };
 
+bool Parser::accept_seq(std::vector<TokenType> ts) {
+    for (int i = 0; i < ts.size(); ++i) {
+        if (this->tokens.at(pos+i).type() != ts.at(i)) return false;
+    }
+    for (auto _ : ts) {
+        this->nextToken();
+    }
+    return true;
+};
+
 void Parser::expect(TokenType type, const char* error) {
     if (!this->accept(type)) {
         this->error(this->curr, error);
@@ -109,13 +120,29 @@ Node* Parser::factor() {
 
         return n;
     } else if (this->accept(TokenType::NUMBER)) {
-        auto* n = new IntLiteralNode;
-        n->start = start;
+        int num = stoi(this->prev->lexeme());
+        if (this->accept_seq(std::vector({ TokenType::DOT, TokenType::NUMBER }))) {
+            auto *n = new DecimalLiteralNode;
+            n->start = start;
 
-        n->number = stoi(this->prev->lexeme());
-        n->end = this->prev_end;
+            int other_num = stoi(this->prev->lexeme());
+            double behind_decimal_point = 0;
+            // Expensive, but doesnt impact runtime performance :D
+            if (other_num != 0) behind_decimal_point = ((double)other_num) / std::pow(10, std::floor(std::log(other_num)+1));
 
-        return n;
+            n->number = (double)num + behind_decimal_point;
+
+            n->end = this->prev_end;
+            return n;
+        } else {
+            auto *n = new IntLiteralNode;
+            n->start = start;
+
+            n->number = num;
+            n->end = this->prev_end;
+
+            return n;
+        }
     } else if (this->accept(TokenType::TRUE) || this->accept(TokenType::FALSE)) {
         auto* n = new BooleanLiteralNode;
         n->start = start;
@@ -256,6 +283,17 @@ Node* Parser::range() {
 
         n->end = this->prev_end;
         return n;
+    } else if (this->accept(TokenType::DOUBLE_STAR)) {
+        // Exponentiation
+        auto* n = new ArithmeticNode;
+        n->op = ArithmeticOperation::EXPONENTIATION;
+        n->start = start;
+
+        n->left = f;
+        n->right = this->factor();
+
+        n->end = this->prev_end;
+        return n;
     } else {
         return f;
     }
@@ -265,13 +303,16 @@ Node* Parser::term() {
     int start = this->start;
     Node* f = this->range();
 
-    if (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH)) {
+    if (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH) || this->accept(TokenType::DOUBLE_SLASH)) {
         auto* n = new ArithmeticNode;
         n->start = start;
 
         // Get operation
         n->op = this->prev->type() == TokenType::STAR 
-            ? ArithmeticOperation::MULTIPLY : ArithmeticOperation::DIVIDE;
+            ? ArithmeticOperation::MULTIPLY
+            : this->prev->type() == TokenType::SLASH
+                ? ArithmeticOperation::DIVIDE
+                : ArithmeticOperation::INTEGER_DIVISION;
         n->left = f;
 
         n->right = this->term();
@@ -420,4 +461,4 @@ Node* Parser::block() {
         return n;
     }
     return this->statement();
-};
+}

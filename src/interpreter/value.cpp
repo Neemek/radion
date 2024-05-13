@@ -36,8 +36,8 @@ std::string value_type_name(ValueType type) {
     switch (type) {
         case ValueType::Int:
             return "int";
-        case ValueType::Float:
-            return "float";
+        case ValueType::Decimal:
+            return "decimal";
         case ValueType::Boolean:
             return "bool";
         case ValueType::String:

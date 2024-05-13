@@ -8,6 +8,11 @@ struct IntLiteralNode : Node {
     int number{};
 };
 
+struct DecimalLiteralNode : Node {
+    DecimalLiteralNode() : Node(NodeType::DecimalLiteral) {}
+    double number{};
+};
+
 struct StringLiteralNode : Node {
     StringLiteralNode() : Node(NodeType::StringLiteral) {}
     std::string string;

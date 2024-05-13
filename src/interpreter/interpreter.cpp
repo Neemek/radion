@@ -54,6 +54,8 @@ Value* Interpreter::evaluate(Node *programNode)
         return ((BooleanLiteralNode *)programNode)->boolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     case NodeType::IntLiteral:
         return new IntValue(((IntLiteralNode *)programNode)->number);
+    case NodeType::DecimalLiteral:
+        return new DecimalValue(((DecimalLiteralNode *)programNode)->number);
     case NodeType::StringLiteral:
         return new StringValue(((StringLiteralNode *)programNode)->string);
     case NodeType::NilLiteral:
@@ -138,9 +140,9 @@ Value* Interpreter::evaluate(Node *programNode)
     break;
 
     case NodeType::Comparison:
-        return new BooleanValue(this->evaluate_boolean(programNode));
+        return BooleanValue::from(this->evaluate_boolean(programNode));
     case NodeType::Not:
-        return new BooleanValue(!this->evaluate_boolean(programNode));
+        return BooleanValue::from(!this->evaluate_boolean(programNode));
 
     case NodeType::Change:
     {
@@ -256,37 +258,87 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
     if (right == nullptr)
         this->exit("Missing value on right side of arithmetic");
 
-    int a;
-    int b;
+    double a;
+    double b;
 
-    if (left->get_type() == ValueType::Int) a = left->as<IntValue>()->number;
-    else if (left->get_type() == ValueType::Boolean) a = left->as<BooleanValue>()->boolean ? 1 : 0;
-    else if (left->get_type() == ValueType::String && arithmeticNode->op == ArithmeticOperation::ADD) return new StringValue(left->to_string() + right->to_string());
-    else this->exit("invalid value for left side of arithmetic: "+left->to_string()+" (type "+left->get_typename()+")");
-    
-    if (right->get_type() == ValueType::Int) b = right->as<IntValue>()->number;
-    else if (right->get_type() == ValueType::Boolean) b = right->as<BooleanValue>()->boolean ? 1 : 0;
-    else if (right->get_type() == ValueType::String && arithmeticNode->op == ArithmeticOperation::ADD) return new StringValue(left->to_string() + right->to_string());
-    else this->exit("invalid value for right side of arithmetic: "+right->to_string()+" (type "+right->get_typename()+")");
+    ValueType returnValue = ValueType::Int;
+
+    switch (left->get_type()) {
+        case Int:
+            a = left->as<IntValue>()->number;
+            break;
+        case Decimal:
+            a = left->as<DecimalValue>()->number;
+            returnValue = ValueType::Decimal;
+            break;
+        case Boolean:
+            a = left->as<BooleanValue>()->boolean ? 1 : 0;
+            break;
+        case String:
+            if (arithmeticNode->op == ArithmeticOperation::ADD)
+                return new StringValue(left->to_string() + right->to_string());
+            this->exit("invalid string operation: "+operation_to_symbol(arithmeticNode->op));
+            break;
+        default:
+            this->exit("invalid value for right side of arithmetic: "+right->to_string()+" (type "+right->get_typename()+")");
+            break;
+    }
+
+    switch (right->get_type()) {
+        case Int:
+            b = right->as<IntValue>()->number;
+            break;
+        case Decimal:
+            b = right->as<DecimalValue>()->number;
+            returnValue = ValueType::Decimal;
+            break;
+        case Boolean:
+            b = right->as<BooleanValue>()->boolean ? 1 : 0;
+            break;
+        case String:
+            if (arithmeticNode->op == ArithmeticOperation::ADD)
+                return new StringValue(left->to_string() + right->to_string());
+            this->exit("invalid operation: "+operation_to_symbol(arithmeticNode->op));
+            break;
+        default:
+            this->exit("invalid value for right side of arithmetic: "+right->to_string()+" (type "+right->get_typename()+")");
+            break;
+    }
+
+    double result;
 
     switch (arithmeticNode->op)
     {
     case ArithmeticOperation::ADD:
-        return new IntValue(a + b);
+        result = a + b;
+        break;
     case ArithmeticOperation::SUBTRACT:
-        return new IntValue(a - b);
+        result = a - b;
+        break;
     case ArithmeticOperation::MULTIPLY:
-        return new IntValue(a * b);
+        result = a * b;
+        break;
     case ArithmeticOperation::DIVIDE:
-        return new IntValue(a / b);
+        result = a / b;
+        if (returnValue != ValueType::Decimal && fmod(a, b) != 0.0f) returnValue = ValueType::Decimal;
+        break;
+    case ArithmeticOperation::INTEGER_DIVISION:
+        result = a / b;
+        returnValue = ValueType::Int;
+        break;
     case ArithmeticOperation::MODULO:
-        return new IntValue(a % b);
+        result = fmod(a, b);
+        break;
     case ArithmeticOperation::EXPONENTIATION:
-        return new IntValue(std::pow(a, b));
+        result = std::pow(a, b);
+        break;
 
     default:
         this->exit("Unimplemented arithmetic operation (type "+std::to_string(arithmeticNode->op)+")");
     }
+
+    if (returnValue == ValueType::Decimal) return new DecimalValue(result);
+    return new IntValue((int)result);
 }
 
 bool Interpreter::evaluate_boolean(Node* expression) {
@@ -306,13 +358,13 @@ bool Interpreter::evaluate_boolean(Node* expression) {
             return !a->equals(b);
 
         case ComparisonType::Greater:
-            return cmp_any_int(a, b, [](int l, int r) { return l > r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l > r; });
         case ComparisonType::GreaterOrEqual:
-            return cmp_any_int(a, b, [](int l, int r) { return l >= r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l >= r; });
         case ComparisonType::Less:
-            return cmp_any_int(a, b, [](int l, int r) { return l < r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l < r; });
         case ComparisonType::LessOrEqual:
-            return cmp_any_int(a, b, [](int l, int r) { return l <= r; });
+            return cmp_any_num(a, b, [](int l, int r) { return l <= r; });
 
         default:
             break;
@@ -322,14 +374,38 @@ bool Interpreter::evaluate_boolean(Node* expression) {
     default:
         Value* value = this->evaluate(expression);
 
-        if (value->get_type() == ValueType::Int) {
-            return value->as<IntValue>()->number != 0;
+        switch (value->get_type()) {
+            case ValueType::Int:
+                return value->as<IntValue>()->number != 0;
+            case ValueType::Decimal:
+                return value->as<DecimalValue>()->number != 0.0f;
+            default:
+                break;
         }
         break;
     }
 
     this->exit("Unimplemented comparison");
     return false;
+}
+
+std::string operation_to_symbol(ArithmeticOperation operation) {
+    switch (operation) {
+        case ADD:
+            return "+";
+        case SUBTRACT:
+            return "-";
+        case MULTIPLY:
+            return "*";
+        case DIVIDE:
+            return "/";
+        case INTEGER_DIVISION:
+            return "//";
+        case MODULO:
+            return "%";
+        case EXPONENTIATION:
+            return "**";
+    }
 }
 
 void Interpreter::table_descend() {
@@ -343,20 +419,32 @@ void Interpreter::table_ascend() {
     this->symbols = super;
 }
 
-bool cmp_any_int(Value* a, Value* b, const std::function<bool(int, int)>& comparison) {
-    int ia;
-    if (a->get_type() == ValueType::Int)
-        ia = a->as<IntValue>()->number;
-    else
-        throw RuntimeException(a->get_typename()+" is not comparable as an int");
+bool cmp_any_num(Value* a, Value* b, const std::function<bool(double, double)>& compare) {
+    double ia;
+    switch (a->get_type()) {
+        case Int:
+            ia = a->as<IntValue>()->number;
+            break;
+        case Decimal:
+            ia = a->as<DecimalValue>()->number;
+            break;
+        default:
+            throw RuntimeException(a->get_typename()+" is not comparable as a number");
+    }
 
-    int ib;
-    if (b->get_type() == ValueType::Int)
-        ib = b->as<IntValue>()->number;
-    else
-        throw RuntimeException(b->get_typename()+" is not comparable as an int");
+    double ib;
+    switch (b->get_type()) {
+        case Int:
+            ib = b->as<IntValue>()->number;
+            break;
+        case Decimal:
+            ib = b->as<DecimalValue>()->number;
+            break;
+        default:
+            throw RuntimeException(b->get_typename()+" is not comparable as a number");
+    }
 
-    return comparison(ia, ib);
+    return compare(ia, ib);
 }
 
 void printAST(Node* root) {

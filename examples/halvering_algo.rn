@@ -1,8 +1,8 @@
 func halvering(f, a, b, n) {
-    midten = (b - a) / 2 + a
+    midten = (b - a) / 2.0 + a
     if (n <= 0) return midten
 
-    if (f(midten) < 0) {
+    if (f(midten) < 0.0) {
         a = midten
     } else {
         b = midten
@@ -12,4 +12,4 @@ func halvering(f, a, b, n) {
 }
 
 
-println(halvering(func(x) x-5, 0, 100, 20))
+println(halvering(func(x) x-5, 0.0, 100.0, 20))

@@ -3,10 +3,11 @@
 
 enum ArithmeticOperation {
     ADD,        SUBTRACT,
-    MULTIPLY,   DIVIDE,
+    MULTIPLY,   DIVIDE, INTEGER_DIVISION,
     MODULO,     EXPONENTIATION,
 };
 
+std::string operation_to_symbol(ArithmeticOperation operation);
 
 struct ArithmeticNode : Node {
     ArithmeticNode() : Node(NodeType::Arithmetic) {}
