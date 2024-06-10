@@ -33,11 +33,12 @@ private:
 
     Node* factor();
     Node* range();
-    Node* term();
     Node* product();
+    Node* expression();
     Node* expression();
     Node* statement();
 
+    Token* peek();
 };
 
 std::string get_position_descriptor(std::string src, int pos);

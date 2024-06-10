@@ -299,56 +299,88 @@ Node* Parser::range() {
     }
 };
 
-Node* Parser::term() {
+Node* Parser::product() {
     int start = this->start;
     Node* f = this->range();
 
-    if (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH) || this->accept(TokenType::DOUBLE_SLASH)) {
-        auto* n = new ArithmeticNode;
-        n->start = start;
+    // if the next is NOT a valid operator
+    if (!this->accept(TokenType::STAR)
+        && !this->accept(TokenType::SLASH)
+        && !this->accept(TokenType::DOUBLE_SLASH))
+        return f;
+
+    // otherwise, create a mini tree
+    ArithmeticNode* n = nullptr;
+    do {
+        auto* branch = new ArithmeticNode;
+        branch->start = start;
 
         // Get operation
-        n->op = this->prev->type() == TokenType::STAR 
+        branch->op = this->prev->type() == TokenType::STAR
             ? ArithmeticOperation::MULTIPLY
             : this->prev->type() == TokenType::SLASH
                 ? ArithmeticOperation::DIVIDE
                 : ArithmeticOperation::INTEGER_DIVISION;
-        n->left = f;
 
-        n->right = this->term();
+        branch->right = this->range();
 
-        n->end = this->prev_end;
-        return n;
-    } else {
-        return f;
-    }
+        branch->end = this->prev_end;
+
+        // if its not the first branch, set the first factor as its left part
+        if (n != nullptr) {
+            branch->left = f;
+        }
+        // otherwise, "descend"
+        else {
+            branch->left = n;
+        }
+        // set the new branch as the root
+        n = branch;
+    } while (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH) || this->accept(TokenType::DOUBLE_SLASH));
+
+    return n;
 };
-
-Node* Parser::product() {
-    int start = this->start;
-    Node* t = this->term();
-
-    if (this->accept(TokenType::PLUS) || this->accept(TokenType::MINUS)) {
-        auto* n = new ArithmeticNode;
-        n->start = start;
-
-        // Get operation
-        n->op = this->prev->type() == TokenType::PLUS 
-            ? ArithmeticOperation::ADD : ArithmeticOperation::SUBTRACT;
-        n->left = t;
-
-        n->right = this->expression();
-
-        n->end = this->prev_end;
-        return n;
-    } else {
-        return t;
-    }
-}
 
 Node* Parser::expression() {
     int start = this->start;
     Node* t = this->product();
+
+    if (!this->accept(TokenType::PLUS) && !this->accept(TokenType::MINUS)) {
+        return t;
+    }
+
+    ArithmeticNode* n = nullptr;
+    do {
+        auto* branch = new ArithmeticNode;
+        branch->start = start;
+
+        // Get operation
+        branch->op = this->prev->type() == TokenType::PLUS
+                     ? ArithmeticOperation::ADD
+                     : ArithmeticOperation::SUBTRACT;
+
+        branch->right = this->range();
+
+        branch->end = this->prev_end;
+
+        // if its not the first branch, set the first factor as its left part
+        if (n != nullptr) {
+            branch->left = t;
+        }
+        // otherwise, "descend"
+        else {
+            branch->left = n;
+        }
+        // set the new branch as the root
+        n = branch;
+    } while (this->accept(TokenType::PLUS) || this->accept(TokenType::MINUS));
+
+    return n;
+}
+
+Node* Parser::expression() {
+    int start = this->start;
+    Node* t = this->expression();
 
     auto* n = new ComparisonNode;
 
@@ -461,4 +493,8 @@ Node* Parser::block() {
         return n;
     }
     return this->statement();
+}
+
+Token* Parser::peek() {
+    return &this->tokens.at(this->pos + 1);
 }
