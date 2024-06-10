@@ -35,7 +35,7 @@ private:
     Node* range();
     Node* product();
     Node* expression();
-    Node* expression();
+    Node* comparison();
     Node* statement();
 
     Token* peek();

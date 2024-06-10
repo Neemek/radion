@@ -165,7 +165,7 @@ Node* Parser::factor() {
         if (this->accept(TokenType::CLOSE_BRACKET)) return n;
 
         do {
-            n->elements.push_back(this->expression());
+            n->elements.push_back(this->comparison());
         } while (this->accept(TokenType::COMMA));
 
         this->expect(TokenType::CLOSE_BRACKET, "list must have closing bracket");
@@ -185,7 +185,7 @@ Node* Parser::factor() {
                 // parse arguments
                 int i = 0;
                 do {
-                    n->params.push_back(this->expression());
+                    n->params.push_back(this->comparison());
                 } while (++i < MAX_PARAMS && this->accept(TokenType::COMMA));
 
                 this->expect(TokenType::CLOSE_PAREN, ("Maximum amount of parameters is "+to_string(MAX_PARAMS)).c_str());
@@ -198,7 +198,7 @@ Node* Parser::factor() {
             n->name = name;
             n->start = start;
 
-            n->value = this->expression();
+            n->value = this->comparison();
             n->end = this->prev_end;
 
             return n;
@@ -232,7 +232,7 @@ Node* Parser::factor() {
         n->end = this->prev_end;
         return n;
     } else if (this->accept(TokenType::OPEN_PAREN)) {
-        Node* n = this->expression();
+        Node* n = this->comparison();
         n->start = start;
         this->expect(TokenType::CLOSE_PAREN, "Needs closing parenthasis");
         n->end = this->prev_end;
@@ -378,7 +378,7 @@ Node* Parser::expression() {
     return n;
 }
 
-Node* Parser::expression() {
+Node* Parser::comparison() {
     int start = this->start;
     Node* t = this->expression();
 
@@ -409,7 +409,7 @@ Node* Parser::statement() {
         auto* n = new IfNode;
         n->start = start;
 
-        n->condition = this->expression();
+        n->condition = this->comparison();
         n->logic = this->block();
         if (this->accept(TokenType::ELSE)) n->otherwise = this->block();
 
@@ -421,7 +421,7 @@ Node* Parser::statement() {
 
         // Optional parenthasis :D
         bool needsClosing = this->accept(TokenType::OPEN_PAREN);
-        n->condition = this->expression();
+        n->condition = this->comparison();
         if (needsClosing) this->expect(TokenType::CLOSE_PAREN, "Closing parenthasis after condition");
 
         if (this->accept(TokenType::DO)) n->doo = this->expression();
@@ -471,12 +471,12 @@ Node* Parser::statement() {
         auto *n = new ReturnNode;
         n->start = start;
 
-        n->value = this->expression();
+        n->value = this->comparison();
 
         n->end = this->prev_end;
         return n;
     }
-    return this->expression();
+    return this->comparison();
 };
 
 Node* Parser::block() {
