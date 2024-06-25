@@ -284,15 +284,35 @@ Node* Parser::range() {
         n->end = this->prev_end;
         return n;
     } else if (this->accept(TokenType::DOUBLE_STAR)) {
-        // Exponentiation
-        auto* n = new ArithmeticNode;
-        n->op = ArithmeticOperation::EXPONENTIATION;
-        n->start = start;
+        // otherwise, create a mini tree
+        ArithmeticNode* n = nullptr;
+        do {
+            auto* branch = new ArithmeticNode;
+            branch->start = start;
 
-        n->left = f;
-        n->right = this->factor();
+            // Get operation
+            branch->op = this->prev->type() == TokenType::STAR
+                         ? ArithmeticOperation::MULTIPLY
+                         : this->prev->type() == TokenType::SLASH
+                           ? ArithmeticOperation::DIVIDE
+                           : ArithmeticOperation::INTEGER_DIVISION;
 
-        n->end = this->prev_end;
+            branch->right = this->factor();
+
+            branch->end = this->prev_end;
+
+            // if its the first branch, set the first factor as its left part
+            if (n == nullptr) {
+                branch->left = f;
+            }
+            // otherwise, "descend"
+            else {
+                branch->left = n;
+            }
+            // set the new branch as the root
+            n = branch;
+        } while (this->accept(TokenType::DOUBLE_STAR));
+
         return n;
     } else {
         return f;
@@ -326,8 +346,8 @@ Node* Parser::product() {
 
         branch->end = this->prev_end;
 
-        // if its not the first branch, set the first factor as its left part
-        if (n != nullptr) {
+        // if its the first branch, set the first factor as its left part
+        if (n == nullptr) {
             branch->left = f;
         }
         // otherwise, "descend"
@@ -359,12 +379,12 @@ Node* Parser::expression() {
                      ? ArithmeticOperation::ADD
                      : ArithmeticOperation::SUBTRACT;
 
-        branch->right = this->range();
+        branch->right = this->product();
 
         branch->end = this->prev_end;
 
-        // if its not the first branch, set the first factor as its left part
-        if (n != nullptr) {
+        // if its the first branch, set the first factor as its left part
+        if (n == nullptr) {
             branch->left = t;
         }
         // otherwise, "descend"
