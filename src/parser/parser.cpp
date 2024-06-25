@@ -131,10 +131,15 @@ Node* Parser::factor() {
             auto *n = new DecimalLiteralNode;
             n->start = start;
 
-            int other_num = stoi(this->prev->lexeme());
+            std::string decimal_part = this->prev->lexeme();
             double behind_decimal_point = 0;
-            // Expensive, but doesnt impact runtime performance :D
-            if (other_num != 0) behind_decimal_point = ((double)other_num) / std::pow(10, std::floor(std::log(other_num)+1));
+
+            for (int i = 0; i < decimal_part.length(); i++) {
+                char c = decimal_part.at(i);
+                int digit = c - '0';
+
+                behind_decimal_point += digit / std::pow(10, i+1);
+            }
 
             n->number = (double)num + behind_decimal_point;
 
