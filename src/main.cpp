@@ -62,7 +62,7 @@ int main (int argc, char *argv[]) {
 		if (args->printTokens) {
 			std::cout << "-- tokens --" << std::endl;
 			print_tokens(src, tokens);
-			std::cout << "-- program output --" << std::endl;
+			std::cout << "-- end tokens --" << std::endl;
 		}
 
 		Parser p(tokens, src);
@@ -72,6 +72,12 @@ int main (int argc, char *argv[]) {
 			std::cout << "Program had errors, not evaluating" << std::endl;
 			return 1;
 		}
+
+        if (args->printAST) {
+            std::cout << "-- ast --" << std::endl;
+            printAST(program);
+            std::cout << "-- end ast --" << std::endl;
+        }
 
 		if (args->dontRun) {
 			std::cout << "not running" << std::endl;
