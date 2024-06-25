@@ -111,10 +111,10 @@ std::string ttype_to_string(TokenType type) {
 		return "COMMA";
 	case TokenType::END:
 		return "END";
-	
+    case TokenType::IN:
+        return "IN";
 	
 	default:
 		throw "Missing conversion from token type to string";
-		break;
 	}
 }
