@@ -39,8 +39,10 @@ void Interpreter::exit(RuntimeException exception) {
 
 Value* Interpreter::evaluate(Node *programNode)
 {
-    if (programNode == nullptr)
+    if (programNode == nullptr) {
         this->exit("Node is a null-pointer");
+        return nullptr;
+    }
 
     this->current_node = programNode;
 
