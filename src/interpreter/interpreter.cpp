@@ -50,6 +50,16 @@ Value* Interpreter::evaluate(Node *programNode)
     {
     case NodeType::Arithmetic:
         return this->evaluate_arithemtic((ArithmeticNode *)programNode);
+    case NodeType::Negation:
+    {
+        auto *negation = (NegationNode *) programNode;
+        Value *v = this->evaluate(negation->value);
+
+        if (v->has_type(ValueType::Int)) return new IntValue(-v->as<IntValue>()->number);
+        else if (v->has_type(ValueType::Decimal)) return new DecimalValue(-v->as<DecimalValue>()->number);
+        else this->exit("Cannot negate value " + v->to_string() + " of type " + v->get_typename());
+    }
+    break;
 
     // Literals
     case NodeType::BooleanLiteral:

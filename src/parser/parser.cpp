@@ -119,6 +119,12 @@ Node* Parser::factor() {
         n->end = this->prev_end;
 
         return n;
+    } else if (this->accept(TokenType::MINUS)) {
+        auto* n = new NegationNode;
+
+        n->value = this->factor();
+
+        return n;
     } else if (this->accept(TokenType::NUMBER)) {
         int num = stoi(this->prev->lexeme());
         if (this->accept_seq(std::vector({ TokenType::DOT, TokenType::NUMBER }))) {

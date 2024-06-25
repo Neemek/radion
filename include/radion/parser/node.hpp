@@ -22,6 +22,7 @@ enum NodeType {
     // Operation
     Arithmetic,
     Comparison,
+    Negation,
     Not,
 
     // Conditional
