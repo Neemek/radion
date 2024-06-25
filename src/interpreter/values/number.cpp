@@ -34,7 +34,7 @@ std::string DecimalValue::to_string() {
     std::stringstream stream;
 
     stream << std::floor(this->number) << ".";
-    double n = this->number;
+    double n = std::abs(this->number);
     do {
         n *= 10;
         int digit = (int)n % 10;
