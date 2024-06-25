@@ -459,6 +459,13 @@ bool cmp_any_num(Value* a, Value* b, const std::function<bool(double, double)>& 
     return compare(ia, ib);
 }
 
+int DEPHT_LEVEL = -1;
+
+void newLineAST() {
+    std::cout << std::endl;
+    for (int i = 0; i < DEPHT_LEVEL; i++) std::cout << "| ";
+}
+
 void printAST(Node* root) {
     switch (root->type)
     {
@@ -476,30 +483,200 @@ void printAST(Node* root) {
         break;
     
     case NodeType::Reference:
-        std::cout << "reference: " << ((ReferenceNode *)root)->name;
+        std::cout << "value of " << ((ReferenceNode *)root)->name;
         break;
     case NodeType::Assign:
-        std::cout << "assign: " << ((AssignNode *)root)->name;
+        std::cout << "assign ";
         printAST(((AssignNode *)root)->value);
-        std::cout << std::endl;
+        std::cout << " to variable " << ((AssignNode *)root)->name;
+        newLineAST();
         break;
     case NodeType::Loop:
     {
         auto *loop = (LoopNode*) root;
-        std::cout << "-- loop --" << std::endl;
-        std::cout << "condition: ";
+        std::cout << "while ";
         printAST(loop->condition);
         if (loop->doo != nullptr) {
-            std::cout << std::endl << "doo: ";
+            std::cout << "(per iteration do ";
             printAST(loop->doo);
+            std::cout << ") ";
         }
-        std::cout << "body" << std::endl;
+        std::cout << "do ";
         printAST(loop->logic);
-        std::cout << std::endl << std::endl;
     }
-    
-    default:
+    case DecimalLiteral:
+        std::cout << std::to_string(((DecimalLiteralNode *)root)->number);
         break;
+    case ListLiteral:
+    {
+        auto *list = (ListLiteralNode *) root;
+        std::cout << "[";
+
+        for (int i = 0; i < list->elements.size(); i++) {
+            Node *element = list->elements.at(i);
+            printAST(element);
+            if (i + 1 < list->elements.size()) std::cout << ", ";
+        }
+
+        std::cout << "]";
+    }
+    break;
+    case For:
+    {
+        auto *loop = (ForNode *) root;
+        std::cout << "for each in ";
+        printAST(loop->values);
+        std::cout << " stored in variable " << loop->counter << " do ";
+        printAST(loop->logic);
+    }
+    break;
+    case Change:
+    {
+        auto *change = (ChangeNode *) root;
+        std::cout << "change variable " << change->name << " by " << change->changeBy;
+        if (change->ret_new) std::cout << " and yield new value";
+    }
+    break;
+    case Arithmetic:
+    {
+        auto *arithmetic = (ArithmeticNode *) root;
+        printAST(arithmetic->left);
+        std::cout << " " << operation_to_symbol(arithmetic->op) << " ";
+        printAST(arithmetic->right);
+    }
+    break;
+    case Comparison:
+    {
+        auto *comparison = (ComparisonNode *)root;
+        printAST(comparison->left);
+        switch (comparison->comparison) {
+
+            case Equals:
+                std::cout << " is equal to ";
+                break;
+            case NotEquals:
+                std::cout << " isn't equal to ";
+                break;
+            case Greater:
+                std::cout << " is greater than ";
+                break;
+            case GreaterOrEqual:
+                std::cout << " is greater than or equal ";
+                break;
+            case Less:
+                std::cout << " is less than ";
+                break;
+            case LessOrEqual:
+                std::cout << " is less than or equal ";
+                break;
+        }
+        printAST(comparison->right);
+    }
+    break;
+    case Negation:
+        std::cout << "negate ";
+        printAST(((NegationNode *)root)->value);
+    break;
+    case Not:
+        std::cout << "not ";
+        printAST(((NotNode *)root)->value);
+    break;
+    case If:
+    {
+        auto *iffie = (IfNode *) root;
+        std::cout << "if ";
+        printAST(iffie->condition);
+        std::cout << " then ";
+        printAST(iffie->logic);
+
+        if (iffie->otherwise != nullptr) {
+            std::cout << "otherwise ";
+            printAST(iffie->otherwise);
+        }
+    }
+    break;
+    case Define:
+    {
+        auto *definition = (DefineNode *)root;
+        std::cout << "define function " << definition->name;
+        if (definition->params.size() > 0) {
+            std::cout << " and take params ";
+
+            for (std::string param : definition->params) {
+                std::cout << param << " ";
+            }
+        }
+
+        std::cout << ", then ";
+        printAST(definition->logic);
+    }
+    break;
+    case InlineDef:
+    {
+        auto *lambda = (InlineDefNode *) root;
+        std::cout << "lambda ";
+
+        if (lambda->params.size() > 0) {
+            std::cout << "with params ";
+
+            std::cout << "[";
+
+            for (int i = 0; i < lambda->params.size(); i++) {
+                std::cout << lambda->params.at(i);
+                if (i+1 < lambda->params.size()) std::cout << ", ";
+            }
+
+            std::cout << "] ";
+        }
+
+        printAST(lambda->logic);
+    }
+    break;
+    case Return:
+    {
+        std::cout << "return ";
+        printAST(((ReturnNode *)root)->value);
+    }
+    break;
+    case Call:
+    {
+        auto *call = (CallNode *)root;
+        std::cout << "call function \"" << call->name << "\"";
+
+        if (call->params.size() > 0) {
+            std::cout << " with params [";
+
+            for (int i = 0; i < call->params.size(); i++) {
+                printAST(call->params.at(i));
+                if (i+1 < call->params.size()) std::cout << ", ";
+            }
+
+            std::cout << "]";
+        }
+
+    }
+    break;
+    case Range:
+    {
+        auto *range = (RangeNode *)root;
+        std::cout
+            << "range from " << range->from
+            << " to " << range->to
+            << " (incremented by " << range->increase << ")";
+    }
+    break;
+    case Block:
+    {
+        auto *block = (BlockNode *)root;
+
+        DEPHT_LEVEL++;
+        for (Node *statement : block->statements) {
+            newLineAST();
+            printAST(statement);
+        }
+        DEPHT_LEVEL--;
+    }
+    break;
     }
 }
 
