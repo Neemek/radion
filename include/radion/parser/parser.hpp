@@ -9,7 +9,7 @@ public:
     Parser();
     Parser(vector<Token> tokens, string src);
     BlockNode* parse();
-    Node* block();
+    Node* block(bool capturing=false);
     bool hadError = false;
 
     void reset(vector<Token> tokens, string src);

@@ -266,7 +266,7 @@ Node* Parser::factor() {
             this->expect(TokenType::CLOSE_PAREN, "Needs closing parenthasis");
         }
 
-        n->logic = this->block();
+        n->logic = this->block(true);
         
         n->end = this->prev_end;
         return n;
@@ -495,7 +495,7 @@ Node* Parser::statement() {
             this->expect(TokenType::CLOSE_PAREN, ("Maximum amount of parameters is "+to_string(MAX_PARAMS)).c_str());
         }
 
-        n->logic = this->block();
+        n->logic = this->block(true);
         n->end = this->prev_end;
         return n;
     } else if (this->accept(TokenType::RETURN)) {
@@ -510,10 +510,11 @@ Node* Parser::statement() {
     return this->comparison();
 };
 
-Node* Parser::block() {
+Node* Parser::block(bool capturing) {
     int start = this->start;
     if (this->accept(TokenType::OPEN_CURLY)) {
         auto* n = new BlockNode;
+        n->isCapturing = capturing;
         n->start = start;
 
         while (this->curr->type() != TokenType::CLOSE_CURLY)
