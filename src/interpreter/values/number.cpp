@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <sstream>
+#include <format>
 
 IntValue::IntValue(int initial) : Value(ValueType::Int) {
     this->number = initial;
@@ -31,21 +32,14 @@ DecimalValue::DecimalValue(double initial) : Value(ValueType::Decimal) {
 }
 
 std::string DecimalValue::to_string() {
-    std::stringstream stream;
+    // maybe later: https://lists.nongnu.org/archive/html/gcl-devel/2012-10/pdfkieTlklRzN.pdf
+    auto str = std::to_string(this->number);
 
-    stream << std::floor(this->number) << ".";
-    double n = std::abs(this->number);
-    do {
-        n *= 10;
-        int digit = (int)n % 10;
-        stream << digit_to_char(digit);
-    } while (std::floor(n) != n);
+    str.erase(str.find_last_not_of('0') + 1, std::string::npos);
+    // if the last character is a dot, add a zero for formatting
+    if (str.at(str.size() - 1) == '.') str.append("0");
 
-    return stream.str();
-}
-
-char digit_to_char(int digit) {
-    return '0' + digit;
+    return str;
 }
 
 bool DecimalValue::equals(Value *other) {
