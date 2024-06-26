@@ -459,7 +459,7 @@ bool cmp_any_num(Value* a, Value* b, const std::function<bool(double, double)>& 
     return compare(ia, ib);
 }
 
-int DEPHT_LEVEL = -1;
+int DEPHT_LEVEL = 0;
 
 void newLineAST() {
     std::cout << std::endl;
@@ -483,13 +483,12 @@ void printAST(Node* root) {
         break;
     
     case NodeType::Reference:
-        std::cout << "value of " << ((ReferenceNode *)root)->name;
+        std::cout << "the value of " << ((ReferenceNode *)root)->name;
         break;
     case NodeType::Assign:
         std::cout << "assign ";
         printAST(((AssignNode *)root)->value);
         std::cout << " to variable " << ((AssignNode *)root)->name;
-        newLineAST();
         break;
     case NodeType::Loop:
     {
@@ -540,9 +539,48 @@ void printAST(Node* root) {
     case Arithmetic:
     {
         auto *arithmetic = (ArithmeticNode *) root;
-        printAST(arithmetic->left);
-        std::cout << " " << operation_to_symbol(arithmetic->op) << " ";
-        printAST(arithmetic->right);
+
+        switch (arithmetic->op) {
+
+            case ADD:
+                printAST(arithmetic->right);
+                std::cout << " added to ";
+                printAST(arithmetic->left);
+                break;
+            case SUBTRACT:
+                printAST(arithmetic->left);
+                std::cout << " subtracted by ";
+                printAST(arithmetic->right);
+                break;
+            case MULTIPLY:
+                printAST(arithmetic->left);
+                std::cout << " multiplied with ";
+                printAST(arithmetic->right);
+                break;
+            case DIVIDE:
+                printAST(arithmetic->left);
+                std::cout << " divided by ";
+                printAST(arithmetic->right);
+                break;
+            case INTEGER_DIVISION:
+                printAST(arithmetic->left);
+                std::cout << " divided by ";
+                printAST(arithmetic->right);
+                std::cout << " rounded down";
+                break;
+            case MODULO:
+                std::cout << "the rest of ";
+                printAST(arithmetic->left);
+                std::cout << " divided by ";
+                printAST(arithmetic->right);
+                break;
+            case EXPONENTIATION:
+                printAST(arithmetic->left);
+                std::cout << " to the power of (";
+                printAST(arithmetic->right);
+                std::cout << ")";
+                break;
+        }
     }
     break;
     case Comparison:
@@ -561,20 +599,20 @@ void printAST(Node* root) {
                 std::cout << " is greater than ";
                 break;
             case GreaterOrEqual:
-                std::cout << " is greater than or equal ";
+                std::cout << " is greater than or equal to ";
                 break;
             case Less:
                 std::cout << " is less than ";
                 break;
             case LessOrEqual:
-                std::cout << " is less than or equal ";
+                std::cout << " is less than or equal to ";
                 break;
         }
         printAST(comparison->right);
     }
     break;
     case Negation:
-        std::cout << "negate ";
+        std::cout << "negative ";
         printAST(((NegationNode *)root)->value);
     break;
     case Not:
@@ -590,6 +628,7 @@ void printAST(Node* root) {
         printAST(iffie->logic);
 
         if (iffie->otherwise != nullptr) {
+            newLineAST();
             std::cout << "otherwise ";
             printAST(iffie->otherwise);
         }
@@ -602,12 +641,15 @@ void printAST(Node* root) {
         if (definition->params.size() > 0) {
             std::cout << " and take params ";
 
-            for (std::string param : definition->params) {
-                std::cout << param << " ";
+            for (int i = 0; i < definition->params.size(); i++) {
+                std::cout << definition->params.at(i);
+                if (i + 2 < definition->params.size()) std::cout << ", ";
+                else if (i + 1 < definition->params.size()) std::cout << " and ";
+                else std::cout << ".";
             }
         }
 
-        std::cout << ", then ";
+        std::cout << " when called: ";
         printAST(definition->logic);
     }
     break;

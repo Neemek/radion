@@ -74,9 +74,9 @@ int main (int argc, char *argv[]) {
 		}
 
         if (args->printAST) {
-            std::cout << "-- ast --" << std::endl;
+            std::cout << "-- ast --"; // printing the ast starts with a new line
             printAST(program);
-            std::cout << "-- end ast --" << std::endl;
+            std::cout << std::endl << "-- end ast --" << std::endl;
         }
 
 		if (args->dontRun) {
