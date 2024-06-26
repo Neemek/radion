@@ -37,8 +37,6 @@ private:
     Node* expression();
     Node* comparison();
     Node* statement();
-
-    Token* peek();
 };
 
 std::string get_position_descriptor(std::string src, int pos);

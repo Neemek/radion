@@ -526,7 +526,3 @@ Node* Parser::block(bool capturing) {
     }
     return this->statement();
 }
-
-Token* Parser::peek() {
-    return &this->tokens.at(this->pos + 1);
-}
