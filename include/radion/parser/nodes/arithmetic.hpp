@@ -24,3 +24,8 @@ struct ChangeNode : Node {
     bool ret_new = false;
     int changeBy = 1;
 };
+
+struct NegationNode : Node {
+    NegationNode() : Node(NodeType::Negation) {}
+    Node* value{};
+};

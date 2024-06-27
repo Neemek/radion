@@ -39,8 +39,10 @@ void Interpreter::exit(RuntimeException exception) {
 
 Value* Interpreter::evaluate(Node *programNode)
 {
-    if (programNode == nullptr)
+    if (programNode == nullptr) {
         this->exit("Node is a null-pointer");
+        return nullptr;
+    }
 
     this->current_node = programNode;
 
@@ -48,6 +50,16 @@ Value* Interpreter::evaluate(Node *programNode)
     {
     case NodeType::Arithmetic:
         return this->evaluate_arithemtic((ArithmeticNode *)programNode);
+    case NodeType::Negation:
+    {
+        auto *negation = (NegationNode *) programNode;
+        Value *v = this->evaluate(negation->value);
+
+        if (v->has_type(ValueType::Int)) return new IntValue(-v->as<IntValue>()->number);
+        else if (v->has_type(ValueType::Decimal)) return new DecimalValue(-v->as<DecimalValue>()->number);
+        else this->exit("Cannot negate value " + v->to_string() + " of type " + v->get_typename());
+    }
+    break;
 
     // Literals
     case NodeType::BooleanLiteral:
@@ -163,6 +175,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
         if (func == nullptr) {
             this->exit("undefined function: "+call->name);
+            return nullptr;
         }
 
         if (func->get_type() != ValueType::Func) {
@@ -253,10 +266,15 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
     Value* left = this->evaluate(arithmeticNode->left);
     Value* right = this->evaluate(arithmeticNode->right);
 
-    if (left == nullptr)
+    if (left == nullptr) {
         this->exit("Missing value on left side of arithmetic");
-    if (right == nullptr)
+        return nullptr;
+    }
+
+    if (right == nullptr) {
         this->exit("Missing value on right side of arithmetic");
+        return nullptr;
+    }
 
     double a;
     double b;
@@ -447,6 +465,13 @@ bool cmp_any_num(Value* a, Value* b, const std::function<bool(double, double)>& 
     return compare(ia, ib);
 }
 
+int DEPHT_LEVEL = 0;
+
+void newLineAST() {
+    std::cout << std::endl;
+    for (int i = 0; i < DEPHT_LEVEL; i++) std::cout << "| ";
+}
+
 void printAST(Node* root) {
     switch (root->type)
     {
@@ -464,30 +489,242 @@ void printAST(Node* root) {
         break;
     
     case NodeType::Reference:
-        std::cout << "reference: " << ((ReferenceNode *)root)->name;
+        std::cout << "the value of " << ((ReferenceNode *)root)->name;
         break;
     case NodeType::Assign:
-        std::cout << "assign: " << ((AssignNode *)root)->name;
+        std::cout << "assign ";
         printAST(((AssignNode *)root)->value);
-        std::cout << std::endl;
+        std::cout << " to variable " << ((AssignNode *)root)->name;
         break;
     case NodeType::Loop:
     {
         auto *loop = (LoopNode*) root;
-        std::cout << "-- loop --" << std::endl;
-        std::cout << "condition: ";
+        std::cout << "while ";
         printAST(loop->condition);
         if (loop->doo != nullptr) {
-            std::cout << std::endl << "doo: ";
+            std::cout << "(per iteration do ";
             printAST(loop->doo);
+            std::cout << ") ";
         }
-        std::cout << "body" << std::endl;
+        std::cout << "do ";
         printAST(loop->logic);
-        std::cout << std::endl << std::endl;
     }
-    
-    default:
+    case DecimalLiteral:
+        std::cout << std::to_string(((DecimalLiteralNode *)root)->number);
         break;
+    case ListLiteral:
+    {
+        auto *list = (ListLiteralNode *) root;
+        std::cout << "[";
+
+        for (unsigned int i = 0; i < list->elements.size(); i++) {
+            Node *element = list->elements.at(i);
+            printAST(element);
+            if (i + 1 < list->elements.size()) std::cout << ", ";
+        }
+
+        std::cout << "]";
+    }
+    break;
+    case For:
+    {
+        auto *loop = (ForNode *) root;
+        std::cout << "for each in ";
+        printAST(loop->values);
+        std::cout << " stored in variable " << loop->counter << " do ";
+        printAST(loop->logic);
+    }
+    break;
+    case Change:
+    {
+        auto *change = (ChangeNode *) root;
+        std::cout << "change variable " << change->name << " by " << change->changeBy;
+        if (change->ret_new) std::cout << " and yield new value";
+    }
+    break;
+    case Arithmetic:
+    {
+        auto *arithmetic = (ArithmeticNode *) root;
+
+        switch (arithmetic->op) {
+
+            case ADD:
+                printAST(arithmetic->right);
+                std::cout << " added to ";
+                printAST(arithmetic->left);
+                break;
+            case SUBTRACT:
+                printAST(arithmetic->left);
+                std::cout << " subtracted by ";
+                printAST(arithmetic->right);
+                break;
+            case MULTIPLY:
+                printAST(arithmetic->left);
+                std::cout << " multiplied with ";
+                printAST(arithmetic->right);
+                break;
+            case DIVIDE:
+                printAST(arithmetic->left);
+                std::cout << " divided by ";
+                printAST(arithmetic->right);
+                break;
+            case INTEGER_DIVISION:
+                printAST(arithmetic->left);
+                std::cout << " divided by ";
+                printAST(arithmetic->right);
+                std::cout << " rounded down";
+                break;
+            case MODULO:
+                std::cout << "the rest of ";
+                printAST(arithmetic->left);
+                std::cout << " divided by ";
+                printAST(arithmetic->right);
+                break;
+            case EXPONENTIATION:
+                printAST(arithmetic->left);
+                std::cout << " to the power of (";
+                printAST(arithmetic->right);
+                std::cout << ")";
+                break;
+        }
+    }
+    break;
+    case Comparison:
+    {
+        auto *comparison = (ComparisonNode *)root;
+        printAST(comparison->left);
+        switch (comparison->comparison) {
+
+            case Equals:
+                std::cout << " is equal to ";
+                break;
+            case NotEquals:
+                std::cout << " isn't equal to ";
+                break;
+            case Greater:
+                std::cout << " is greater than ";
+                break;
+            case GreaterOrEqual:
+                std::cout << " is greater than or equal to ";
+                break;
+            case Less:
+                std::cout << " is less than ";
+                break;
+            case LessOrEqual:
+                std::cout << " is less than or equal to ";
+                break;
+        }
+        printAST(comparison->right);
+    }
+    break;
+    case Negation:
+        std::cout << "negative ";
+        printAST(((NegationNode *)root)->value);
+    break;
+    case Not:
+        std::cout << "not ";
+        printAST(((NotNode *)root)->value);
+    break;
+    case If:
+    {
+        auto *iffie = (IfNode *) root;
+        std::cout << "if ";
+        printAST(iffie->condition);
+        std::cout << " then ";
+        printAST(iffie->logic);
+
+        if (iffie->otherwise != nullptr) {
+            newLineAST();
+            std::cout << "otherwise ";
+            printAST(iffie->otherwise);
+        }
+    }
+    break;
+    case Define:
+    {
+        auto *definition = (DefineNode *)root;
+        std::cout << "define function " << definition->name;
+        if (!definition->params.empty()) {
+            std::cout << " and take params ";
+
+            for (unsigned int i = 0; i < definition->params.size(); i++) {
+                std::cout << definition->params.at(i);
+                if (i + 2 < definition->params.size()) std::cout << ", ";
+                else if (i + 1 < definition->params.size()) std::cout << " and ";
+                else std::cout << ".";
+            }
+        }
+
+        std::cout << " when called: ";
+        printAST(definition->logic);
+    }
+    break;
+    case InlineDef:
+    {
+        auto *lambda = (InlineDefNode *) root;
+        std::cout << "lambda ";
+
+        if (!lambda->params.empty()) {
+            std::cout << "with params ";
+
+            std::cout << "[";
+
+            for (unsigned int i = 0; i < lambda->params.size(); i++) {
+                std::cout << lambda->params.at(i);
+                if (i+1 < lambda->params.size()) std::cout << ", ";
+            }
+
+            std::cout << "] ";
+        }
+
+        printAST(lambda->logic);
+    }
+    break;
+    case Return:
+    {
+        std::cout << "return ";
+        printAST(((ReturnNode *)root)->value);
+    }
+    break;
+    case Call:
+    {
+        auto *call = (CallNode *)root;
+        std::cout << "call function \"" << call->name << "\"";
+
+        if (!call->params.empty()) {
+            std::cout << " with params [";
+
+            for (unsigned int i = 0; i < call->params.size(); i++) {
+                printAST(call->params.at(i));
+                if (i+1 < call->params.size()) std::cout << ", ";
+            }
+
+            std::cout << "]";
+        }
+
+    }
+    break;
+    case Range:
+    {
+        auto *range = (RangeNode *)root;
+        std::cout
+            << "range from " << range->from
+            << " to " << range->to
+            << " (incremented by " << range->increase << ")";
+    }
+    break;
+    case Block:
+    {
+        auto *block = (BlockNode *)root;
+
+        DEPHT_LEVEL++;
+        for (Node *statement : block->statements) {
+            newLineAST();
+            printAST(statement);
+        }
+        DEPHT_LEVEL--;
+    }
+    break;
     }
 }
 

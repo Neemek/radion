@@ -25,10 +25,10 @@ Parser::Parser(vector<Token> tokens, string src) {
 void Parser::reset(vector<Token> tokens, string src) {
     this->tokens = std::move(tokens);
     this->src = std::move(src);
-    this->pos = -1;
+    this->pos = 0;
     this->hadError = false;
 
-    this->nextToken();
+    this->curr = &this->tokens.at(0);
 }
 
 BlockNode* Parser::parse() {
@@ -44,7 +44,7 @@ BlockNode* Parser::parse() {
 
 void Parser::nextToken() {
     if (this->pos+1 == this->tokens.size()) {
-        throw "Didnt stop at end of tokens!";
+        throw ParsingException("Didnt stop at end of tokens!");
     }
 
     this->prev = curr;
@@ -54,10 +54,10 @@ void Parser::nextToken() {
     if (this->pos != 0) this->prev_end = this->prev->pos() + this->prev->lexeme().size();
 }
 
-std::string get_position_descriptor(std::string src, int pos) {
+std::string get_position_descriptor(std::string src, unsigned int pos) {
     int linen = 1;
     int from_start = 0;
-    for (int i=0; i < pos && i < src.length(); i++) {
+    for (unsigned int i = 0; i < pos && i < src.length(); i++) {
         if (src.at(i) == '\n') {
             linen++;
             from_start = 0;
@@ -85,10 +85,10 @@ bool Parser::accept(TokenType type) {
 };
 
 bool Parser::accept_seq(std::vector<TokenType> ts) {
-    for (int i = 0; i < ts.size(); ++i) {
+    for (unsigned int i = 0; i < ts.size(); ++i) {
         if (this->tokens.at(pos+i).type() != ts.at(i)) return false;
     }
-    for (auto _ : ts) {
+    for (unsigned int i = 0; i < ts.size(); ++i) {
         this->nextToken();
     }
     return true;
@@ -119,16 +119,27 @@ Node* Parser::factor() {
         n->end = this->prev_end;
 
         return n;
+    } else if (this->accept(TokenType::MINUS)) {
+        auto* n = new NegationNode;
+
+        n->value = this->factor();
+
+        return n;
     } else if (this->accept(TokenType::NUMBER)) {
         int num = stoi(this->prev->lexeme());
         if (this->accept_seq(std::vector({ TokenType::DOT, TokenType::NUMBER }))) {
             auto *n = new DecimalLiteralNode;
             n->start = start;
 
-            int other_num = stoi(this->prev->lexeme());
+            std::string decimal_part = this->prev->lexeme();
             double behind_decimal_point = 0;
-            // Expensive, but doesnt impact runtime performance :D
-            if (other_num != 0) behind_decimal_point = ((double)other_num) / std::pow(10, std::floor(std::log(other_num)+1));
+
+            for (unsigned int i = 0; i < decimal_part.length(); i++) {
+                char c = decimal_part.at(i);
+                int digit = c - '0';
+
+                behind_decimal_point += digit / std::pow(10, i+1);
+            }
 
             n->number = (double)num + behind_decimal_point;
 
@@ -165,7 +176,7 @@ Node* Parser::factor() {
         if (this->accept(TokenType::CLOSE_BRACKET)) return n;
 
         do {
-            n->elements.push_back(this->expression());
+            n->elements.push_back(this->comparison());
         } while (this->accept(TokenType::COMMA));
 
         this->expect(TokenType::CLOSE_BRACKET, "list must have closing bracket");
@@ -185,7 +196,7 @@ Node* Parser::factor() {
                 // parse arguments
                 int i = 0;
                 do {
-                    n->params.push_back(this->expression());
+                    n->params.push_back(this->comparison());
                 } while (++i < MAX_PARAMS && this->accept(TokenType::COMMA));
 
                 this->expect(TokenType::CLOSE_PAREN, ("Maximum amount of parameters is "+to_string(MAX_PARAMS)).c_str());
@@ -198,7 +209,7 @@ Node* Parser::factor() {
             n->name = name;
             n->start = start;
 
-            n->value = this->expression();
+            n->value = this->comparison();
             n->end = this->prev_end;
 
             return n;
@@ -232,7 +243,7 @@ Node* Parser::factor() {
         n->end = this->prev_end;
         return n;
     } else if (this->accept(TokenType::OPEN_PAREN)) {
-        Node* n = this->expression();
+        Node* n = this->comparison();
         n->start = start;
         this->expect(TokenType::CLOSE_PAREN, "Needs closing parenthasis");
         n->end = this->prev_end;
@@ -255,7 +266,7 @@ Node* Parser::factor() {
             this->expect(TokenType::CLOSE_PAREN, "Needs closing parenthasis");
         }
 
-        n->logic = this->block();
+        n->logic = this->block(true);
         
         n->end = this->prev_end;
         return n;
@@ -284,40 +295,35 @@ Node* Parser::range() {
         n->end = this->prev_end;
         return n;
     } else if (this->accept(TokenType::DOUBLE_STAR)) {
-        // Exponentiation
-        auto* n = new ArithmeticNode;
-        n->op = ArithmeticOperation::EXPONENTIATION;
-        n->start = start;
+        // otherwise, create a mini tree
+        ArithmeticNode* n = nullptr;
+        do {
+            auto* branch = new ArithmeticNode;
+            branch->start = start;
 
-        n->left = f;
-        n->right = this->factor();
+            // Get operation
+            branch->op = this->prev->type() == TokenType::STAR
+                         ? ArithmeticOperation::MULTIPLY
+                         : this->prev->type() == TokenType::SLASH
+                           ? ArithmeticOperation::DIVIDE
+                           : ArithmeticOperation::INTEGER_DIVISION;
 
-        n->end = this->prev_end;
-        return n;
-    } else {
-        return f;
-    }
-};
+            branch->right = this->factor();
 
-Node* Parser::term() {
-    int start = this->start;
-    Node* f = this->range();
+            branch->end = this->prev_end;
 
-    if (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH) || this->accept(TokenType::DOUBLE_SLASH)) {
-        auto* n = new ArithmeticNode;
-        n->start = start;
+            // if its the first branch, set the first factor as its left part
+            if (n == nullptr) {
+                branch->left = f;
+            }
+            // otherwise, "descend"
+            else {
+                branch->left = n;
+            }
+            // set the new branch as the root
+            n = branch;
+        } while (this->accept(TokenType::DOUBLE_STAR));
 
-        // Get operation
-        n->op = this->prev->type() == TokenType::STAR 
-            ? ArithmeticOperation::MULTIPLY
-            : this->prev->type() == TokenType::SLASH
-                ? ArithmeticOperation::DIVIDE
-                : ArithmeticOperation::INTEGER_DIVISION;
-        n->left = f;
-
-        n->right = this->term();
-
-        n->end = this->prev_end;
         return n;
     } else {
         return f;
@@ -326,29 +332,86 @@ Node* Parser::term() {
 
 Node* Parser::product() {
     int start = this->start;
-    Node* t = this->term();
+    Node* f = this->range();
 
-    if (this->accept(TokenType::PLUS) || this->accept(TokenType::MINUS)) {
-        auto* n = new ArithmeticNode;
-        n->start = start;
+    // if the next is NOT a valid operator
+    if (!this->accept(TokenType::STAR)
+        && !this->accept(TokenType::SLASH)
+        && !this->accept(TokenType::DOUBLE_SLASH))
+        return f;
+
+    // otherwise, create a mini tree
+    ArithmeticNode* n = nullptr;
+    do {
+        auto* branch = new ArithmeticNode;
+        branch->start = start;
 
         // Get operation
-        n->op = this->prev->type() == TokenType::PLUS 
-            ? ArithmeticOperation::ADD : ArithmeticOperation::SUBTRACT;
-        n->left = t;
+        branch->op = this->prev->type() == TokenType::STAR
+            ? ArithmeticOperation::MULTIPLY
+            : this->prev->type() == TokenType::SLASH
+                ? ArithmeticOperation::DIVIDE
+                : ArithmeticOperation::INTEGER_DIVISION;
 
-        n->right = this->expression();
+        branch->right = this->range();
 
-        n->end = this->prev_end;
-        return n;
-    } else {
-        return t;
-    }
-}
+        branch->end = this->prev_end;
+
+        // if its the first branch, set the first factor as its left part
+        if (n == nullptr) {
+            branch->left = f;
+        }
+        // otherwise, "descend"
+        else {
+            branch->left = n;
+        }
+        // set the new branch as the root
+        n = branch;
+    } while (this->accept(TokenType::STAR) || this->accept(TokenType::SLASH) || this->accept(TokenType::DOUBLE_SLASH));
+
+    return n;
+};
 
 Node* Parser::expression() {
     int start = this->start;
     Node* t = this->product();
+
+    if (!this->accept(TokenType::PLUS) && !this->accept(TokenType::MINUS)) {
+        return t;
+    }
+
+    ArithmeticNode* n = nullptr;
+    do {
+        auto* branch = new ArithmeticNode;
+        branch->start = start;
+
+        // Get operation
+        branch->op = this->prev->type() == TokenType::PLUS
+                     ? ArithmeticOperation::ADD
+                     : ArithmeticOperation::SUBTRACT;
+
+        branch->right = this->product();
+
+        branch->end = this->prev_end;
+
+        // if its the first branch, set the first factor as its left part
+        if (n == nullptr) {
+            branch->left = t;
+        }
+        // otherwise, "descend"
+        else {
+            branch->left = n;
+        }
+        // set the new branch as the root
+        n = branch;
+    } while (this->accept(TokenType::PLUS) || this->accept(TokenType::MINUS));
+
+    return n;
+}
+
+Node* Parser::comparison() {
+    int start = this->start;
+    Node* t = this->expression();
 
     auto* n = new ComparisonNode;
 
@@ -377,7 +440,7 @@ Node* Parser::statement() {
         auto* n = new IfNode;
         n->start = start;
 
-        n->condition = this->expression();
+        n->condition = this->comparison();
         n->logic = this->block();
         if (this->accept(TokenType::ELSE)) n->otherwise = this->block();
 
@@ -389,7 +452,7 @@ Node* Parser::statement() {
 
         // Optional parenthasis :D
         bool needsClosing = this->accept(TokenType::OPEN_PAREN);
-        n->condition = this->expression();
+        n->condition = this->comparison();
         if (needsClosing) this->expect(TokenType::CLOSE_PAREN, "Closing parenthasis after condition");
 
         if (this->accept(TokenType::DO)) n->doo = this->expression();
@@ -432,25 +495,26 @@ Node* Parser::statement() {
             this->expect(TokenType::CLOSE_PAREN, ("Maximum amount of parameters is "+to_string(MAX_PARAMS)).c_str());
         }
 
-        n->logic = this->block();
+        n->logic = this->block(true);
         n->end = this->prev_end;
         return n;
     } else if (this->accept(TokenType::RETURN)) {
         auto *n = new ReturnNode;
         n->start = start;
 
-        n->value = this->expression();
+        n->value = this->comparison();
 
         n->end = this->prev_end;
         return n;
     }
-    return this->expression();
+    return this->comparison();
 };
 
-Node* Parser::block() {
+Node* Parser::block(bool capturing) {
     int start = this->start;
     if (this->accept(TokenType::OPEN_CURLY)) {
         auto* n = new BlockNode;
+        n->isCapturing = capturing;
         n->start = start;
 
         while (this->curr->type() != TokenType::CLOSE_CURLY)
@@ -461,4 +525,12 @@ Node* Parser::block() {
         return n;
     }
     return this->statement();
+}
+
+ParsingException::ParsingException(const char* message) {
+    this->message = message;
+}
+
+const char *ParsingException::what() const noexcept {
+    return this->message;
 }

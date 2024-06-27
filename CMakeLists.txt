@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.27)
 project(radion)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 include_directories(include)
 add_executable(
     radion 

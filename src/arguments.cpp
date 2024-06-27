@@ -8,10 +8,12 @@ Arguments* parseArgs(int argc, char* argv[]) {
     {
         char* arg = argv[i];
 
-        if (!strcmp(arg, "--dont-run")) {
+        if (!strcmp(arg, "--dont-run") || !strcmp(arg, "--dry")) {
             args->dontRun = true;
         } else if (!strcmp(arg, "--print-tokens")) {
             args->printTokens = true;
+        } else if (!strcmp(arg, "--print-ast")) {
+            args->printAST = true;
         } else {
             args->entryPath = arg;
         }

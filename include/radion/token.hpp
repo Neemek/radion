@@ -7,7 +7,7 @@ using namespace std;
 class Token
 {
 public:
-	Token(TokenType type, string lexeme, int pos);
+	Token(TokenType type, string lexeme, unsigned int pos);
 
 	// Get the type of this token
 	TokenType type();
@@ -16,12 +16,12 @@ public:
 	string lexeme();
 
 	// Get the position of the lexeme in the source
-	int pos();
+	[[nodiscard]] unsigned int pos() const;
 
 private:
 	TokenType _type;
 	string _lexeme;
-	int _pos;
+	unsigned int _pos;
 };
 
 std::string ttype_to_string(TokenType type);
