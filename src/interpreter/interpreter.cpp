@@ -376,13 +376,13 @@ bool Interpreter::evaluate_boolean(Node* expression) {
             return !a->equals(b);
 
         case ComparisonType::Greater:
-            return cmp_any_num(a, b, [](int l, int r) { return l > r; });
+            return cmp_any_num(a, b, [](double l, double r) { return l > r; });
         case ComparisonType::GreaterOrEqual:
-            return cmp_any_num(a, b, [](int l, int r) { return l >= r; });
+            return cmp_any_num(a, b, [](double l, double r) { return l >= r; });
         case ComparisonType::Less:
-            return cmp_any_num(a, b, [](int l, int r) { return l < r; });
+            return cmp_any_num(a, b, [](double l, double r) { return l < r; });
         case ComparisonType::LessOrEqual:
-            return cmp_any_num(a, b, [](int l, int r) { return l <= r; });
+            return cmp_any_num(a, b, [](double l, double r) { return l <= r; });
 
         default:
             break;
