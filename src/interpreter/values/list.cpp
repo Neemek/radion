@@ -13,8 +13,8 @@ std::string ListValue::to_string() {
     std::stringstream s;
     s << "[";
 
-    int n = this->elements.size();
-    for (int i = 0; i < n; i++) {
+    unsigned int n = this->elements.size();
+    for (unsigned int i = 0; i < n; i++) {
         s << this->elements.at(i)->to_string();
         if (i + 1 < n) s << ", ";
     }
@@ -29,7 +29,7 @@ bool ListValue::equals(Value *other) {
 
     if (this->elements.size() != list->elements.size()) return false;
 
-    for (int i = 0; i < this->elements.size(); ++i) {
+    for (unsigned int i = 0; i < this->elements.size(); ++i) {
         if (!this->elements.at(i)->equals(list->elements.at(i))) return false;
     }
 

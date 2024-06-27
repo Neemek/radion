@@ -9,7 +9,7 @@ vector<Token> Lexer::lex(std::string src)
 {
 
     vector<Token> tokens = vector<Token>();
-    int pos = 0, start;
+    unsigned int pos = 0, start;
 
     string c, n;
     while (pos < src.length()) {

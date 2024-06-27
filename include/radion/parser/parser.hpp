@@ -39,4 +39,12 @@ private:
     Node* statement();
 };
 
+class ParsingException : std::exception {
+public:
+    explicit ParsingException(const char* message);
+    [[nodiscard]] const char * what() const noexcept override;
+private:
+    const char* message;
+};
+
 std::string get_position_descriptor(std::string src, int pos);

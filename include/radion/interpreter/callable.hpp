@@ -31,12 +31,12 @@ private:
 
 class NativeCallable : public Callable {
 public:
-    NativeCallable(std::string name, std::function<Value*(std::vector<Value*> arguments)> function);
+    NativeCallable(std::string name, std::function<Value*(Interpreter *interpreter, std::vector<Value*> arguments)> function);
     Value* call(Interpreter* interpreter, std::vector<Value*> arguments) override;
 
     bool equals(Value *other) override;
     Value * copy() override;
 private:
-    std::function<Value*(std::vector<Value*> arguments)> logic;
+    std::function<Value*(Interpreter *interpreter, std::vector<Value*> arguments)> logic;
 };
 

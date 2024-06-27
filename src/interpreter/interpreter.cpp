@@ -175,6 +175,7 @@ Value* Interpreter::evaluate(Node *programNode)
 
         if (func == nullptr) {
             this->exit("undefined function: "+call->name);
+            return nullptr;
         }
 
         if (func->get_type() != ValueType::Func) {
@@ -265,10 +266,15 @@ Value* Interpreter::evaluate_arithemtic(ArithmeticNode *arithmeticNode)
     Value* left = this->evaluate(arithmeticNode->left);
     Value* right = this->evaluate(arithmeticNode->right);
 
-    if (left == nullptr)
+    if (left == nullptr) {
         this->exit("Missing value on left side of arithmetic");
-    if (right == nullptr)
+        return nullptr;
+    }
+
+    if (right == nullptr) {
         this->exit("Missing value on right side of arithmetic");
+        return nullptr;
+    }
 
     double a;
     double b;
@@ -511,7 +517,7 @@ void printAST(Node* root) {
         auto *list = (ListLiteralNode *) root;
         std::cout << "[";
 
-        for (int i = 0; i < list->elements.size(); i++) {
+        for (unsigned int i = 0; i < list->elements.size(); i++) {
             Node *element = list->elements.at(i);
             printAST(element);
             if (i + 1 < list->elements.size()) std::cout << ", ";
@@ -638,10 +644,10 @@ void printAST(Node* root) {
     {
         auto *definition = (DefineNode *)root;
         std::cout << "define function " << definition->name;
-        if (definition->params.size() > 0) {
+        if (!definition->params.empty()) {
             std::cout << " and take params ";
 
-            for (int i = 0; i < definition->params.size(); i++) {
+            for (unsigned int i = 0; i < definition->params.size(); i++) {
                 std::cout << definition->params.at(i);
                 if (i + 2 < definition->params.size()) std::cout << ", ";
                 else if (i + 1 < definition->params.size()) std::cout << " and ";
@@ -658,12 +664,12 @@ void printAST(Node* root) {
         auto *lambda = (InlineDefNode *) root;
         std::cout << "lambda ";
 
-        if (lambda->params.size() > 0) {
+        if (!lambda->params.empty()) {
             std::cout << "with params ";
 
             std::cout << "[";
 
-            for (int i = 0; i < lambda->params.size(); i++) {
+            for (unsigned int i = 0; i < lambda->params.size(); i++) {
                 std::cout << lambda->params.at(i);
                 if (i+1 < lambda->params.size()) std::cout << ", ";
             }
@@ -685,10 +691,10 @@ void printAST(Node* root) {
         auto *call = (CallNode *)root;
         std::cout << "call function \"" << call->name << "\"";
 
-        if (call->params.size() > 0) {
+        if (!call->params.empty()) {
             std::cout << " with params [";
 
-            for (int i = 0; i < call->params.size(); i++) {
+            for (unsigned int i = 0; i < call->params.size(); i++) {
                 printAST(call->params.at(i));
                 if (i+1 < call->params.size()) std::cout << ", ";
             }

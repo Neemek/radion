@@ -20,7 +20,7 @@ DefinedCallable::DefinedCallable(std::string name, std::vector<std::string> argu
 
 Value* DefinedCallable::call(Interpreter* interpreter, std::vector<Value*> arguments) {
     interpreter->table_descend();
-    for (int i = 0; i < arguments.size(); i++)
+    for (unsigned int i = 0; i < arguments.size(); i++)
     {
         interpreter->symbols->put(this->arguments.at(i), arguments.at(i));
     }
@@ -43,13 +43,13 @@ Value *DefinedCallable::copy() {
 }
 
 
-NativeCallable::NativeCallable(std::string name, std::function<Value*(std::vector<Value*> arguments)> function) : Callable() {
+NativeCallable::NativeCallable(std::string name, std::function<Value*(Interpreter *interpreter, std::vector<Value*> arguments)> function) : Callable() {
     this->name = std::move(name);
     this->logic = std::move(function);
 }
 
 Value* NativeCallable::call(Interpreter* interpreter, std::vector<Value*> arguments) {
-    return this->logic(arguments);
+    return this->logic(interpreter, arguments);
 }
 
 bool NativeCallable::equals(Value *other) {

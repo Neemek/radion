@@ -44,7 +44,7 @@ BlockNode* Parser::parse() {
 
 void Parser::nextToken() {
     if (this->pos+1 == this->tokens.size()) {
-        throw "Didnt stop at end of tokens!";
+        throw ParsingException("Didnt stop at end of tokens!");
     }
 
     this->prev = curr;
@@ -57,7 +57,7 @@ void Parser::nextToken() {
 std::string get_position_descriptor(std::string src, int pos) {
     int linen = 1;
     int from_start = 0;
-    for (int i=0; i < pos && i < src.length(); i++) {
+    for (unsigned int i = 0; i < pos && i < src.length(); i++) {
         if (src.at(i) == '\n') {
             linen++;
             from_start = 0;
@@ -85,10 +85,10 @@ bool Parser::accept(TokenType type) {
 };
 
 bool Parser::accept_seq(std::vector<TokenType> ts) {
-    for (int i = 0; i < ts.size(); ++i) {
+    for (unsigned int i = 0; i < ts.size(); ++i) {
         if (this->tokens.at(pos+i).type() != ts.at(i)) return false;
     }
-    for (auto _ : ts) {
+    for (unsigned int i = 0; i < ts.size(); ++i) {
         this->nextToken();
     }
     return true;
@@ -134,7 +134,7 @@ Node* Parser::factor() {
             std::string decimal_part = this->prev->lexeme();
             double behind_decimal_point = 0;
 
-            for (int i = 0; i < decimal_part.length(); i++) {
+            for (unsigned int i = 0; i < decimal_part.length(); i++) {
                 char c = decimal_part.at(i);
                 int digit = c - '0';
 
@@ -525,4 +525,12 @@ Node* Parser::block(bool capturing) {
         return n;
     }
     return this->statement();
+}
+
+ParsingException::ParsingException(const char* message) {
+    this->message = message;
+}
+
+const char *ParsingException::what() const noexcept {
+    return this->message;
 }

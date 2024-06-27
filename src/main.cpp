@@ -13,7 +13,7 @@ int main (int argc, char *argv[]) {
 	Arguments* args = parseArgs(argc, argv);
 
 	if (args->entryPath == nullptr) {
-		// Help or REPL
+        // Help or REPL
 		//vector<Token> tokens = Lexer::lex(src);
 
 		string src;
@@ -23,7 +23,11 @@ int main (int argc, char *argv[]) {
         Value *returned;
 
         bool replRunning = true;
-        interpreter.symbols->put("exit", new NativeCallable("exit", [&replRunning](std::vector<Value*> args) {
+        interpreter.symbols->put("exit",new NativeCallable("exit", [&replRunning](Interpreter *interpreter, const std::vector<Value*>& args) {
+            // doesnt depend on arguments; Alex B. https://stackoverflow.com/questions/1486904/how-do-i-best-silence-a-warning-about-unused-variables
+            (void)interpreter;
+            (void)args;
+
             replRunning = false;
             return NIL_VALUE;
         }));

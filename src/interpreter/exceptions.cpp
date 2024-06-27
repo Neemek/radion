@@ -25,11 +25,11 @@ void RuntimeException::print(std::string src) {
 
     std::string line;
 
-    int linepos = 0;
+    unsigned int linepos = 0;
 
-    int i;
+    unsigned int i;
     // find the closest newline before where the error occurred
-    for (i = 0; i < this->error_causer->start; ++i) {
+    for (i = 0; i < (unsigned int)this->error_causer->start; ++i) {
         char c = src.at(i);
 
         if (c == '\n') {
@@ -50,8 +50,8 @@ void RuntimeException::print(std::string src) {
     std::cout << position_descriptor << " " << line << std::endl;
 
     // offset
-    for (int j = 0; j < this->error_causer->start - linepos + position_descriptor.size(); ++j) std::cout << " ";
-    for (int j = 0; j < this->error_causer->end - this->error_causer->start; ++j) std::cout << "^";
+    for (unsigned int j = 0; j < (unsigned int)(this->error_causer->start - linepos + position_descriptor.size()); ++j) std::cout << " ";
+    for (unsigned int j = 0; j < (unsigned int)(this->error_causer->end - this->error_causer->start); ++j) std::cout << "^";
 
     std::cout << std::endl;
 }

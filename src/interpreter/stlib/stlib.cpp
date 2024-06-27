@@ -13,7 +13,7 @@
 
 
 void print(std::vector<Value*> args) {
-    for (int i = 0; i < args.size(); i++) {
+    for (unsigned int i = 0; i < args.size(); i++) {
         std::cout << args.at(i)->to_string();
         if (i+1 < args.size()) std::cout << " ";
     }
@@ -22,12 +22,12 @@ void print(std::vector<Value*> args) {
 void registerStandardLibrary(SymbolTable* top) {
     
     // Native functions
-    top->put("print", new NativeCallable("print", [](std::vector<Value*> arguments)
+    top->put("print", new NativeCallable("print", []([[maybe_unused]] Interpreter *interpreter, std::vector<Value*> arguments)
                                                               {
         print(std::move(arguments));
 
         return NIL_VALUE; }));
-    top->put("println", new NativeCallable("println", [](std::vector<Value*> arguments)
+    top->put("println", new NativeCallable("println", []([[maybe_unused]] Interpreter *interpreter, std::vector<Value*> arguments)
                                                                {
         print(std::move(arguments));
         std::cout << std::endl;
@@ -35,7 +35,7 @@ void registerStandardLibrary(SymbolTable* top) {
         return NIL_VALUE; }));
 
 
-    top->put("time", new NativeCallable("time", [](std::vector<Value*> args) {
+    top->put("time", new NativeCallable("time", []([[maybe_unused]] Interpreter *interpreter, std::vector<Value*> args) {
         long t = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()
         ).count();
@@ -46,10 +46,10 @@ void registerStandardLibrary(SymbolTable* top) {
         return new IntValue((int)t);
     }));
 
-    top->put("zip", new NativeCallable("zip", [](const std::vector<Value*>& args) {
+    top->put("zip", new NativeCallable("zip", []([[maybe_unused]] Interpreter *interpreter, const std::vector<Value*>& args) {
         auto *zipped = new ListValue;
 
-        int max_size = 0;
+        unsigned int max_size = 0;
         for (Value *arg : args) {
             auto *listArg = arg->expect_type(ValueType::List)->as<ListValue>();
             if (listArg->elements.size() > max_size) max_size = (int)listArg->elements.size();
@@ -60,7 +60,7 @@ void registerStandardLibrary(SymbolTable* top) {
             auto *l = arg->as<ListValue>();
             std::vector<Value*> elements = l->elements;
 
-            for (int i = 0; i < zipped->elements.size(); ++i) {
+            for (unsigned int i = 0; i < zipped->elements.size(); ++i) {
                 auto layer = zipped->elements.at(i)->as<ListValue>();
 
                 if (elements.size() <= i) {
