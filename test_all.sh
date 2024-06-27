@@ -2,9 +2,11 @@
 
 FAILED=()
 
+cmake --build cmake-build-release
+
 for file in ./examples/*.rn; do
     echo $'\e[32m[test_all.sh] Running file '$file$'\e[0m'
-    gtimeout 5s ./release/radion "$file"
+    gtimeout 5s ./cmake-build-release/radion "$file"
 
     if [ 0 -ne $? ]; then
         FAILED+=($file)
