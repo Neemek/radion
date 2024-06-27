@@ -6,7 +6,6 @@
 
 #include <cmath>
 #include <sstream>
-#include <format>
 
 IntValue::IntValue(int initial) : Value(ValueType::Int) {
     this->number = initial;
