@@ -25,10 +25,10 @@ Parser::Parser(vector<Token> tokens, string src) {
 void Parser::reset(vector<Token> tokens, string src) {
     this->tokens = std::move(tokens);
     this->src = std::move(src);
-    this->pos = -1;
+    this->pos = 0;
     this->hadError = false;
 
-    this->nextToken();
+    this->curr = &this->tokens.at(0);
 }
 
 BlockNode* Parser::parse() {
@@ -54,7 +54,7 @@ void Parser::nextToken() {
     if (this->pos != 0) this->prev_end = this->prev->pos() + this->prev->lexeme().size();
 }
 
-std::string get_position_descriptor(std::string src, int pos) {
+std::string get_position_descriptor(std::string src, unsigned int pos) {
     int linen = 1;
     int from_start = 0;
     for (unsigned int i = 0; i < pos && i < src.length(); i++) {

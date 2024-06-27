@@ -12,17 +12,17 @@ public:
     Node* block(bool capturing=false);
     bool hadError = false;
 
-    void reset(vector<Token> tokens, string src);
+    void reset(vector<Token> tokenss, string src);
 
 private:
-    int pos = -1;
+    unsigned int pos = 0;
     std::string src;
     Token* prev{};
     Token* curr{};
     vector<Token> tokens;
 
-    int start = 0;
-    int prev_end = 0;
+    unsigned int start = 0;
+    unsigned int prev_end = 0;
 
     void nextToken();
     void error(Token* token, const char* message);
@@ -47,4 +47,4 @@ private:
     const char* message;
 };
 
-std::string get_position_descriptor(std::string src, int pos);
+std::string get_position_descriptor(std::string src, unsigned int pos);

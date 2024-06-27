@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Token::Token(TokenType type, string lexeme, int pos)
+Token::Token(TokenType type, string lexeme, unsigned int pos)
 {
 	_type = type;
 	_lexeme = std::move(lexeme);
@@ -23,7 +23,7 @@ string Token::lexeme()
 	return _lexeme;
 }
 
-int Token::pos()
+unsigned int Token::pos() const
 {
 	return _pos;
 }
@@ -113,8 +113,5 @@ std::string ttype_to_string(TokenType type) {
 		return "END";
     case TokenType::IN:
         return "IN";
-	
-	default:
-		throw "Missing conversion from token type to string";
 	}
 }
