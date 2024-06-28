@@ -302,11 +302,7 @@ Node* Parser::range() {
             branch->start = start;
 
             // Get operation
-            branch->op = this->prev->type() == TokenType::STAR
-                         ? ArithmeticOperation::MULTIPLY
-                         : this->prev->type() == TokenType::SLASH
-                           ? ArithmeticOperation::DIVIDE
-                           : ArithmeticOperation::INTEGER_DIVISION;
+            branch->op = ArithmeticOperation::EXPONENTIATION;
 
             branch->right = this->factor();
 
